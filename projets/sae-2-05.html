@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SA&Eacute; 2.05 &ndash; Indicateurs de performance | Manon de Matha</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green-main: #7A9E7E;
+    --green-dark: #4F6F52;
+    --green-light: #a8c5ab;
+    --green-pale: #d4e4d6;
+    --pink-soft: #E8B4B8;
+    --pink-accent: #D98C95;
+    --gold-soft: #E5C488;
+    --gold-main: #C9A86A;
+    --gold-dark: #A68A4C;
+    --beige: #F5EFE6;
+    --white-warm: #FAF8F5;
+    --text: #2E2E2E;
+    --text-light: #5a5a5a;
+    --text-muted: #8a8a7e;
+    --font-display: 'Cormorant Garamond', Georgia, serif;
+    --font-body: 'Nunito', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--font-body);
+    color: var(--text);
+    background: var(--beige);
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(245, 239, 230, 0.88);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(122, 158, 126, 0.12);
+  }
+  nav.scrolled { box-shadow: 0 2px 24px rgba(79, 111, 82, 0.08); }
+  .nav-inner {
+    max-width: 1200px; margin: 0 auto; padding: 0 2rem;
+    display: flex; align-items: center; justify-content: space-between; height: 64px;
+  }
+  .nav-logo {
+    font-family: var(--font-display); font-size: 1.35rem; font-weight: 600;
+    color: var(--green-dark); text-decoration: none; display: flex; align-items: center; gap: 8px;
+  }
+  .nav-logo svg { width: 22px; height: 22px; }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a {
+    font-size: 0.82rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--text-light); text-decoration: none; position: relative; padding: 4px 0; transition: color 0.3s;
+  }
+  .nav-links a::after {
+    content: ''; position: absolute; bottom: -2px; left: 0;
+    width: 0; height: 2px; background: var(--pink-accent); border-radius: 1px; transition: width 0.3s;
+  }
+  .nav-links a:hover { color: var(--green-dark); }
+  .nav-links a.active { color: var(--green-dark); }
+  .nav-links a:hover::after { width: 100%; }
+  .nav-links a.active::after { width: 100%; }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .fade-up {
+    opacity: 0; transform: translateY(24px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+    animation: fallbackVisible 0s 2s forwards;
+  }
+  @keyframes fallbackVisible {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+  .content-section.fade-up, .screenshot-grid, .screenshot-item, .project-hero, .project-hero-grid {
+    opacity: 1 !important; transform: translateY(0) !important;
+  }
+
+  /* PROJECT HERO */
+  .project-hero {
+    padding: 120px 2rem 3rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .project-breadcrumb {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1.5rem;
+  }
+  .project-breadcrumb a {
+    color: var(--green-main); text-decoration: none; font-weight: 600;
+    transition: color 0.3s;
+  }
+  .project-breadcrumb a:hover { color: var(--green-dark); }
+  .project-breadcrumb svg { width: 14px; height: 14px; }
+
+  .project-hero-grid {
+    display: grid; grid-template-columns: 1fr 340px; gap: 3rem; align-items: start;
+  }
+
+  .project-meta-tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 5px 14px; border-radius: 20px;
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+  .project-meta-tag.c1 { background: rgba(122, 158, 126, 0.15); color: var(--green-dark); }
+  .project-meta-tag.c2 { background: rgba(201, 168, 106, 0.2); color: var(--gold-dark); }
+  .project-meta-tag.c3 { background: rgba(232, 180, 184, 0.22); color: var(--pink-accent); }
+  .project-meta-tag .sep { opacity: 0.5; font-weight: 400; }
+  .project-hero-title {
+    font-family: var(--font-display); font-size: clamp(2.2rem, 4vw, 3rem);
+    font-weight: 700; color: var(--green-dark); line-height: 1.15; margin-bottom: 0.75rem;
+  }
+  .project-hero-subtitle {
+    font-family: var(--font-display); font-size: 1.15rem; font-weight: 500;
+    font-style: italic; color: var(--gold-main); margin-bottom: 1.5rem;
+  }
+  .project-hero-desc {
+    font-size: 0.95rem; color: var(--text-light); line-height: 1.75; margin-bottom: 1.5rem;
+  }
+
+  /* Info sidebar card */
+  .project-info-card {
+    background: var(--white-warm); border-radius: 20px; padding: 2rem;
+    border: 1px solid rgba(122, 158, 126, 0.1);
+    box-shadow: 0 4px 20px rgba(79, 111, 82, 0.06);
+    position: sticky; top: 90px;
+  }
+  .project-info-card h4 {
+    font-family: var(--font-display); font-size: 1.1rem; font-weight: 600;
+    color: var(--green-dark); margin-bottom: 1.2rem;
+    padding-bottom: 0.75rem; border-bottom: 1px solid rgba(122, 158, 126, 0.1);
+  }
+  .info-row {
+    display: flex; align-items: flex-start; gap: 12px; margin-bottom: 1rem;
+  }
+  .info-row:last-child { margin-bottom: 0; }
+  .info-row svg {
+    width: 18px; height: 18px; color: var(--green-main); flex-shrink: 0; margin-top: 2px;
+  }
+  .info-label {
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em;
+    text-transform: uppercase; color: var(--text-muted); margin-bottom: 2px;
+  }
+  .info-value { font-size: 0.88rem; color: var(--text); font-weight: 500; }
+
+  .tools-list {
+    display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px;
+  }
+  .tool-tag {
+    padding: 3px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 600;
+    display: inline-flex; align-items: center; gap: 5px;
+  }
+  /* Primary tool - solid green */
+  .tool-tag.primary { background: rgba(122, 158, 126, 0.18); color: var(--green-dark); }
+  /* Secondary tool - outlined green */
+  .tool-tag.secondary {
+    background: transparent; color: var(--green-main);
+    border: 1px solid rgba(122, 158, 126, 0.35);
+    padding: 2px 9px;
+  }
+  /* External resource - pink */
+  .tool-tag.external { background: rgba(232, 180, 184, 0.2); color: var(--pink-accent); }
+  /* Legacy support */
+  .tool-tag.green { background: rgba(122, 158, 126, 0.18); color: var(--green-dark); }
+  .tool-tag.pink { background: rgba(232, 180, 184, 0.2); color: var(--pink-accent); }
+
+  /* CONTENT SECTIONS */
+  .project-content {
+    max-width: 860px; margin: 0 auto; padding: 0 2rem 4rem;
+  }
+
+  .content-section {
+    margin-bottom: 3rem;
+  }
+  .content-section-header {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 1.2rem;
+  }
+  .content-section-num {
+    width: 36px; height: 36px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display); font-size: 1rem; font-weight: 700;
+    flex-shrink: 0;
+  }
+  .num-green { background: rgba(122, 158, 126, 0.14); color: var(--green-dark); }
+  .num-pink { background: rgba(232, 180, 184, 0.18); color: var(--pink-accent); }
+  .content-section-title {
+    font-family: var(--font-display); font-size: 1.4rem; font-weight: 600;
+    color: var(--green-dark);
+  }
+
+  .content-section p {
+    font-size: 0.92rem; color: var(--text-light); line-height: 1.75; margin-bottom: 0.75rem;
+  }
+  .content-section p:last-child { margin-bottom: 0; }
+
+  .problematique-box {
+    background: var(--white-warm); border-left: 3px solid var(--pink-accent);
+    border-radius: 0 16px 16px 0; padding: 1.3rem 1.6rem; margin: 1rem 0;
+    font-family: var(--font-display); font-size: 1.05rem; font-style: italic;
+    color: var(--green-dark); line-height: 1.55;
+  }
+
+  /* Steps */
+  .step-block {
+    position: relative; padding-left: 28px; margin-bottom: 1.5rem;
+  }
+  .step-block::before {
+    content: ''; position: absolute; left: 6px; top: 28px; bottom: -12px;
+    width: 2px; background: var(--green-pale); border-radius: 2px;
+  }
+  .step-block:last-child::before { display: none; }
+  .step-dot {
+    position: absolute; left: 0; top: 6px;
+    width: 14px; height: 14px; border-radius: 50%;
+    border: 2.5px solid var(--green-main); background: var(--beige);
+  }
+  .step-block:nth-child(even) .step-dot { border-color: var(--pink-accent); }
+  .step-title {
+    font-family: var(--font-display); font-size: 1.1rem; font-weight: 600;
+    color: var(--green-dark); margin-bottom: 0.4rem;
+  }
+  .step-block p {
+    font-size: 0.88rem; color: var(--text-light); line-height: 1.7;
+  }
+
+  /* Screenshots */
+  .screenshot-grid {
+    display: grid; grid-template-columns: 1fr; gap: 2rem; margin: 1.5rem 0;
+  }
+  .screenshot-item {
+    border-radius: 16px; overflow: hidden;
+    border: 1px solid rgba(122, 158, 126, 0.1);
+    box-shadow: 0 4px 16px rgba(79, 111, 82, 0.06);
+    background: var(--white-warm);
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  .screenshot-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(79, 111, 82, 0.1);
+  }
+  .screenshot-item img {
+    width: 100%; display: block; cursor: pointer;
+    min-height: 80px;
+    background: var(--beige);
+  }
+  .screenshot-caption {
+    padding: 0.75rem 1.2rem;
+    font-size: 0.8rem; font-weight: 600; color: var(--text-muted);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .screenshot-caption svg { width: 14px; height: 14px; color: var(--green-main); }
+
+  /* Carousel */
+  .carousel-container {
+    position: relative; border-radius: 16px; overflow: hidden;
+    border: 1px solid rgba(122, 158, 126, 0.1);
+    box-shadow: 0 4px 16px rgba(79, 111, 82, 0.06);
+    background: var(--white-warm);
+    margin: 1.5rem 0;
+  }
+  .carousel-track {
+    display: flex; transition: transform 0.4s ease;
+  }
+  .carousel-slide {
+    min-width: 100%; position: relative;
+  }
+  .carousel-slide img {
+    width: 100%; display: block; cursor: pointer;
+    min-height: 120px; background: var(--beige);
+  }
+  .carousel-caption {
+    padding: 0.75rem 1.2rem;
+    font-size: 0.8rem; font-weight: 600; color: var(--text-muted);
+    display: flex; align-items: center; gap: 8px;
+    background: var(--white-warm);
+  }
+  .carousel-caption svg { width: 14px; height: 14px; color: var(--green-main); }
+  .carousel-btn {
+    position: absolute; top: 50%; transform: translateY(-70%);
+    width: 40px; height: 40px; border-radius: 50%;
+    background: rgba(255,255,255,0.9); border: 1px solid rgba(122, 158, 126, 0.15);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; z-index: 10;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: background 0.3s, transform 0.3s;
+  }
+  .carousel-btn:hover {
+    background: var(--white-warm);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  }
+  .carousel-btn svg { width: 18px; height: 18px; color: var(--green-dark); }
+  .carousel-btn.prev { left: 12px; }
+  .carousel-btn.next { right: 12px; }
+  .carousel-dots {
+    display: flex; justify-content: center; gap: 6px;
+    padding: 0.6rem 0; background: var(--white-warm);
+  }
+  .carousel-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--green-pale); border: none; cursor: pointer;
+    transition: background 0.3s, transform 0.3s;
+  }
+  .carousel-dot.active {
+    background: var(--green-main); transform: scale(1.25);
+  }
+
+  /* YouTube thumbnail */
+  .video-thumb {
+    position: relative; display: block; border-radius: 16px; overflow: hidden;
+    margin: 1.5rem 0;
+    box-shadow: 0 4px 20px rgba(79, 111, 82, 0.1);
+    border: 1px solid rgba(122, 158, 126, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  .video-thumb:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 32px rgba(79, 111, 82, 0.15);
+  }
+  .video-thumb img { width: 100%; display: block; }
+  .video-play-btn {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 68px; height: 48px;
+    background: #FF0000; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0.9; transition: opacity 0.3s, transform 0.3s;
+  }
+  .video-thumb:hover .video-play-btn {
+    opacity: 1; transform: translate(-50%, -50%) scale(1.1);
+  }
+  .video-play-btn svg { width: 24px; height: 24px; fill: white; }
+
+  /* Competences chips */
+  .competence-grid {
+    display: flex; flex-wrap: wrap; gap: 8px; margin: 1rem 0;
+  }
+  .competence-chip {
+    padding: 6px 14px; border-radius: 20px;
+    font-size: 0.78rem; font-weight: 600;
+    background: rgba(122, 158, 126, 0.1); color: var(--green-dark);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .competence-chip svg { width: 12px; height: 12px; }
+  .competence-chip.highlight {
+    background: rgba(232, 180, 184, 0.18); color: var(--pink-accent);
+  }
+
+  /* Difficulty cards */
+  .difficulty-card {
+    background: var(--white-warm); border-radius: 16px; padding: 1.3rem 1.5rem;
+    margin-bottom: 1rem; border: 1px solid rgba(122, 158, 126, 0.08);
+  }
+  .difficulty-card h4 {
+    font-family: var(--font-display); font-size: 1.05rem; font-weight: 600;
+    color: var(--green-dark); margin-bottom: 0.4rem;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .difficulty-card h4 svg { width: 16px; height: 16px; color: var(--pink-accent); }
+  .difficulty-card p {
+    font-size: 0.85rem; color: var(--text-light); line-height: 1.65;
+  }
+
+  /* Learnings */
+  .learning-block {
+    background: linear-gradient(135deg, rgba(122, 158, 126, 0.06), rgba(232, 180, 184, 0.06));
+    border-radius: 20px; padding: 2rem; margin: 1.5rem 0;
+    border: 1px solid rgba(122, 158, 126, 0.1);
+  }
+  .learning-block h4 {
+    font-family: var(--font-display); font-size: 1.1rem; font-weight: 600;
+    color: var(--green-dark); margin-bottom: 0.75rem;
+  }
+  .learning-block p {
+    font-size: 0.88rem; color: var(--text-light); line-height: 1.7; margin-bottom: 0.6rem;
+  }
+  .learning-block p:last-child { margin-bottom: 0; }
+
+  /* Back to projects button */
+  .back-projects {
+    display: flex; justify-content: center; padding: 2rem 0 4rem;
+  }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 12px 28px; border-radius: 50px;
+    font-family: var(--font-body); font-size: 0.88rem; font-weight: 600;
+    text-decoration: none; cursor: pointer; border: none; transition: all 0.35s;
+  }
+  .btn svg { width: 16px; height: 16px; }
+  .btn-primary { background: var(--green-dark); color: var(--white-warm); }
+  .btn-primary:hover {
+    background: var(--green-main); transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(79, 111, 82, 0.2);
+  }
+
+  /* Footer */
+  footer {
+    background: var(--green-dark); color: rgba(255,255,255,0.6);
+    text-align: center; padding: 2rem; font-size: 0.82rem;
+  }
+  footer a { color: var(--pink-soft); text-decoration: none; }
+
+  /* Lightbox */
+  .lightbox {
+    display: none; position: fixed; inset: 0; z-index: 200;
+    background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+    align-items: center; justify-content: center; cursor: pointer;
+  }
+  .lightbox.active { display: flex; }
+  .lightbox img {
+    max-width: 92vw; max-height: 90vh; border-radius: 12px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.3);
+  }
+  .lightbox-close {
+    position: absolute; top: 20px; right: 24px;
+    color: white; font-size: 2rem; cursor: pointer; opacity: 0.7;
+    transition: opacity 0.3s;
+  }
+  .lightbox-close:hover { opacity: 1; }
+
+  /* Wave divider */
+  .wave-divider { width: 100%; height: 60px; margin: -1px 0; }
+
+  /* Section subtitle */
+  .section-subtitle {
+    font-family: var(--font-display); font-size: 1.05rem; font-weight: 600;
+    color: var(--pink-accent); margin: 2rem 0 0.5rem;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .section-subtitle svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .project-hero-grid { grid-template-columns: 1fr; }
+    .project-info-card { position: static; }
+    .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+<nav id="navbar"><div class="nav-inner"><a href="../index.html" class="nav-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10"/><path d="M12 2c2 3 3 6.5 3 10s-1 7-3 10"/><path d="M12 2c-2 3-3 6.5-3 10s1 7 3 10"/><path d="M2 12h10"/><path d="M17 8l-1 8"/><path d="M20 6l-1 12"/></svg>Manon de Matha</a><ul class="nav-links"><li><a href="../index.html#accueil">Accueil</a></li><li><a href="../index.html#apropos">&Agrave; propos</a></li><li><a href="../index.html#projets" class="active">Projets</a></li><li><a href="../index.html#competences">Comp&eacute;tences</a></li><li><a href="../index.html#bilan">Bilan</a></li><li><a href="../index.html#contact">Contact</a></li></ul></div></nav>
+<div class="lightbox" id="lightbox"><span class="lightbox-close">&times;</span><img id="lightbox-img" src="" alt=""></div>
+
+<section class="project-hero">
+  <div class="project-breadcrumb fade-up"><a href="../index.html">Accueil</a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg><a href="../index.html#projets" class="active">Projets</a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg><span>SA&Eacute; 2.05</span></div>
+  <div class="project-hero-grid">
+    <div class="fade-up">
+      <span class="project-meta-tag c3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:14px;height:14px;"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 6v6l4 2"/></svg> SA&Eacute; 2.05 <span class="sep">&middot;</span> S2 <span class="sep">&middot;</span> C3 Valoriser</span>
+      <h1 class="project-hero-title">Tableau de bord Fleury Michon</h1>
+      <p class="project-hero-subtitle" style="color: var(--pink-accent);">Construction et analyse d&rsquo;indicateurs de performance (KPI)</p>
+      <p class="project-hero-desc">Analyse financi&egrave;re d&rsquo;une entreprise r&eacute;elle, le groupe agroalimentaire Fleury Michon, &agrave; travers la construction et l&rsquo;interpr&eacute;tation d&rsquo;indicateurs de performance. En deux parties&nbsp;: l&rsquo;analyse du groupe (CA par p&ocirc;le, profitabilit&eacute;, productivit&eacute;, 2022&ndash;2024) puis le calcul des Soldes Interm&eacute;diaires de Gestion de la filiale FM-LS (2019&ndash;2022), synth&eacute;tis&eacute;s dans un tableau de bord visuel exploitable par un d&eacute;cideur. Rapport de 7&nbsp;pages, r&eacute;alis&eacute; en bin&ocirc;me.</p>
+    </div>
+    <div class="project-info-card fade-up" style="transition-delay: 0.15s;">
+      <h4>Informations</h4>
+      <div class="info-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><div><p class="info-label">Ann&eacute;e</p><p class="info-value">2025 &ndash; 2026 (S2)</p></div></div>
+      <div class="info-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M8 14l2 2 4-4"/></svg><div><p class="info-label">Date de rendu</p><p class="info-value">Mai 2026</p></div></div>
+      <div class="info-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><div><p class="info-label">Cadre</p><p class="info-value">Bin&ocirc;me avec Louis</p></div></div>
+      <div class="info-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><div><p class="info-label">Livrables</p><p class="info-value">Rapport (7 pages) + tableau de bord (format paysage)</p></div></div>
+      <div class="info-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg><div><p class="info-label">Outils</p><div class="tools-list"><span class="tool-tag primary">Excel</span><span class="tool-tag secondary">Mise en page</span><span class="tool-tag external">Fleury Michon</span></div></div></div>
+      <div class="info-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg><div><p class="info-label">SA&Eacute;</p><p class="info-value">Construction et pr&eacute;sentation d&rsquo;indicateurs de performance</p></div></div>
+    </div>
+  </div>
+</section>
+<svg class="wave-divider" viewBox="0 0 1440 60" preserveAspectRatio="none"><path d="M0,30 C360,55 720,5 1080,35 C1260,50 1380,20 1440,30 L1440,60 L0,60 Z" fill="var(--white-warm)"/></svg>
+<div style="background: var(--white-warm);"><div class="project-content" style="padding-top: 3rem;">
+
+  <div class="content-section fade-up"><div class="content-section-header"><div class="content-section-num num-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="width:18px;height:18px;"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div><h2 class="content-section-title">Contexte &amp; objectifs</h2></div>
+    <p>Cette SA&Eacute; portait sur l&rsquo;analyse financi&egrave;re d&rsquo;une entreprise r&eacute;elle &agrave; travers la construction, le calcul et l&rsquo;interpr&eacute;tation d&rsquo;indicateurs de performance (KPI). L&rsquo;entreprise &eacute;tudi&eacute;e &eacute;tait Fleury Michon, groupe agroalimentaire fran&ccedil;ais fond&eacute; en 1905 &agrave; Pouzauges (Vend&eacute;e), sp&eacute;cialis&eacute; dans la charcuterie, les plats cuisin&eacute;s et les produits de la mer (surimi). Cot&eacute; sur Euronext Growth Paris, le groupe emploie environ 3&nbsp;275 collaborateurs et r&eacute;alise un chiffre d&rsquo;affaires de 807&nbsp;M&euro;, avec une pr&eacute;sence dans 8&nbsp;foyers fran&ccedil;ais sur 10.</p>
+    <p>Le travail s&rsquo;articulait en deux parties&nbsp;: la Partie&nbsp;1 analysait le groupe Fleury Michon dans son ensemble (&eacute;volution du CA par p&ocirc;le, taux de profitabilit&eacute;, productivit&eacute; par salari&eacute;, sur 2022&ndash;2024), tandis que la Partie&nbsp;2 portait sur la filiale FM-LS (comptes de r&eacute;sultat 2019&ndash;2022) avec le calcul des Soldes Interm&eacute;diaires de Gestion (SIG), des ratios de performance et la conception d&rsquo;un tableau de bord visuel. Travail r&eacute;alis&eacute; en bin&ocirc;me avec Louis.</p>
+  </div>
+
+  <div class="content-section fade-up"><div class="content-section-header"><div class="content-section-num num-pink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="width:18px;height:18px;"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div><h2 class="content-section-title">Probl&eacute;matique</h2></div>
+    <div class="problematique-box">Comment construire et pr&eacute;senter des indicateurs de performance pertinents pour &eacute;valuer la sant&eacute; financi&egrave;re d&rsquo;une entreprise agroalimentaire, et comment synth&eacute;tiser visuellement cette analyse dans un tableau de bord exploitable par un d&eacute;cideur&nbsp;?</div>
+  </div>
+
+  <div class="content-section fade-up"><div class="content-section-header"><div class="content-section-num num-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="width:18px;height:18px;"><polyline points="20 6 9 17 4 12"/></svg></div><h2 class="content-section-title">R&eacute;alisation</h2></div>
+    <div class="step-block"><div class="step-dot"></div><h3 class="step-title">&Eacute;tape 1 &ndash; Pr&eacute;sentation de l&rsquo;entreprise et contexte sectoriel</h3><p>Recherche documentaire sur Fleury Michon pour contextualiser l&rsquo;analyse&nbsp;: positionnement (3&egrave;me marque alimentaire pr&eacute;f&eacute;r&eacute;e des Fran&ccedil;ais), activit&eacute;s (charcuterie, plats cuisin&eacute;s, surimi, catering a&eacute;rien), implantation (10 sites de production en Vend&eacute;e). Cette contextualisation &eacute;tait essentielle pour interpr&eacute;ter correctement les indicateurs financiers par la suite (AC13.02).</p></div>
+    <div class="step-block"><div class="step-dot"></div><h3 class="step-title">&Eacute;tape 2 &ndash; Analyse du groupe FM (Partie 1&nbsp;: 2022&ndash;2024)</h3><p>Calcul des taux de variation annuelle du CA par p&ocirc;le (GMS France, International, Autres secteurs)&nbsp;: croissance globale de +18,5&nbsp;% sur la p&eacute;riode, port&eacute;e par l&rsquo;international (+82&nbsp;%) malgr&eacute; sa part marginale. Le taux de profitabilit&eacute; nette suit une trajectoire contrast&eacute;e (0,57&nbsp;% &rarr; 0,30&nbsp;% &rarr; 1,23&nbsp;%). Le CA par salari&eacute; progresse de +21&nbsp;% en deux ans sans recrutements proportionnels. Deux graphiques illustrent l&rsquo;analyse&nbsp;: CA par p&ocirc;le (barres group&eacute;es) et CA total avec profitabilit&eacute; (double axe).</p></div>
+    <div class="step-block"><div class="step-dot"></div><h3 class="step-title">&Eacute;tape 3 &ndash; Calcul des indicateurs FM-LS (Partie 2&nbsp;: 2019&ndash;2022)</h3><p>&Agrave; partir des comptes de r&eacute;sultat de la filiale FM-LS, calcul de l&rsquo;ensemble des Soldes Interm&eacute;diaires de Gestion (marge commerciale, valeur ajout&eacute;e, EBE, r&eacute;sultat d&rsquo;exploitation, r&eacute;sultat de l&rsquo;exercice) et des ratios associ&eacute;s (profitabilit&eacute; nette, VA/CA, charges de personnel/VA, CAF/VA, productivit&eacute; par salari&eacute;). Chaque indicateur a &eacute;t&eacute; compar&eacute; aux moyennes sectorielles.</p></div>
+    <div class="step-block"><div class="step-dot"></div><h3 class="step-title">&Eacute;tape 4 &ndash; Diagnostic financier</h3><p>Le diagnostic met en &eacute;vidence un profil sain mais fragile. Points forts&nbsp;: CA en hausse de +8,6&nbsp;% (685 &rarr; 743,7&nbsp;M&euro;), cr&eacute;ation de richesse (VA/CA&nbsp;=&nbsp;20,3&nbsp;%) sup&eacute;rieure au secteur (17,2&nbsp;%), productivit&eacute; en nette progression. Points de vigilance&nbsp;: d&eacute;gradation de l&rsquo;EBE de &minus;50&nbsp;% en 3&nbsp;ans (61 &rarr; 27,9&nbsp;M&euro;), charges de personnel absorbant 76,9&nbsp;% de la VA (vs 68,1&nbsp;%), profitabilit&eacute; nette (1,04&nbsp;%) l&eacute;g&egrave;rement en de&ccedil;&agrave; du secteur (1,3&nbsp;%).</p></div>
+    <div class="step-block"><div class="step-dot"></div><h3 class="step-title">&Eacute;tape 5 &ndash; Conception du tableau de bord visuel</h3><p>Synth&egrave;se de l&rsquo;analyse sur une seule page paysage en six blocs&nbsp;: Activit&eacute;, R&eacute;sultat et Profitabilit&eacute;, SIG et Profitabilit&eacute;, Partage de la VA, Productivit&eacute;. Chaque bloc combine des KPI chiffr&eacute;s (variations et comparaisons sectorielles) et des graphiques vari&eacute;s&nbsp;: barres &agrave; double axe, courbe, empil&eacute; et radar comparant 2019 et 2022.</p></div>
+  </div>
+
+  <div class="content-section fade-up"><div class="content-section-header"><div class="content-section-num num-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="width:18px;height:18px;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div><h2 class="content-section-title">R&eacute;sultats &amp; preuves</h2></div>
+
+    <div class="section-subtitle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> Tableau de bord FM-LS (2019&ndash;2022)</div>
+    <div class="screenshot-grid">
+      <div class="screenshot-item"><img src="../images/sae205/sae205-dashboard.png" alt="Tableau de bord FM-LS 2019-2022" onclick="openLightbox(this)"><div class="screenshot-caption"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Livrable visuel principal &ndash; 6 blocs (Activit&eacute;, R&eacute;sultat, SIG, Partage de la VA, Productivit&eacute;) avec KPI et graphiques (double axe, empil&eacute;, radar). Cliquer pour agrandir.</div></div>
+    </div>
+    <div style="text-align: center; margin: 1rem 0 1.5rem;"><a href="../images/sae205/sae205-dashboard.pdf" target="_blank" rel="noopener" style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 24px; border-radius: 50px; font-family: var(--font-body); font-size: 0.82rem; font-weight: 600; color: var(--green-dark); border: 1.5px solid var(--green-main); text-decoration: none; transition: all 0.35s; background: transparent;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:16px;height:16px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> T&eacute;l&eacute;charger le tableau de bord (PDF)</a></div>
+
+    <div class="section-subtitle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> Rapport d&rsquo;analyse</div>
+    <div class="carousel-container" id="carousel-rapport"><div class="carousel-track">
+      <div class="carousel-slide"><img src="../images/sae205/sae205-rapport-p1.png" alt="Rapport p1" onclick="openLightbox(this)"><div class="carousel-caption"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Page de garde &ndash; Analyse des indicateurs cl&eacute;s de performance de Fleury Michon</div></div>
+      <div class="carousel-slide"><img src="../images/sae205/sae205-rapport-p2.png" alt="Rapport p2" onclick="openLightbox(this)"><div class="carousel-caption"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Pr&eacute;sentation de Fleury Michon &amp; analyse du CA du groupe (2022&ndash;2024)</div></div>
+      <div class="carousel-slide"><img src="../images/sae205/sae205-rapport-p3.png" alt="Rapport p3" onclick="openLightbox(this)"><div class="carousel-caption"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> &Eacute;volution du CA par p&ocirc;le &amp; d&eacute;composition du taux de profitabilit&eacute; nette</div></div>
+      <div class="carousel-slide"><img src="../images/sae205/sae205-rapport-p4.png" alt="Rapport p4" onclick="openLightbox(this)"><div class="carousel-caption"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> CA total / profitabilit&eacute; nette &amp; CA par salari&eacute; par p&ocirc;le</div></div>
+      <div class="carousel-slide"><img src="../images/sae205/sae205-rapport-p6.png" alt="Rapport p6" onclick="openLightbox(this)"><div class="carousel-caption"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Diagnostic FM-LS &ndash; activit&eacute;, r&eacute;sultat, SIG, partage de la VA, productivit&eacute;</div></div>
+      <div class="carousel-slide"><img src="../images/sae205/sae205-rapport-p7.png" alt="Rapport p7" onclick="openLightbox(this)"><div class="carousel-caption"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Conclusion du diagnostic &ndash; points forts &amp; points de vigilance</div></div>
+    </div>
+    <button class="carousel-btn prev" onclick="moveCarousel('carousel-rapport', -1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+    <button class="carousel-btn next" onclick="moveCarousel('carousel-rapport', 1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 6 15 12 9 18"/></svg></button>
+    <div class="carousel-dots" id="carousel-rapport-dots"></div></div>
+    <div style="text-align: center; margin: 1rem 0 1.5rem;"><a href="../images/sae205/sae205-rapport.pdf" target="_blank" rel="noopener" style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 24px; border-radius: 50px; font-family: var(--font-body); font-size: 0.82rem; font-weight: 600; color: var(--green-dark); border: 1.5px solid var(--green-main); text-decoration: none; transition: all 0.35s; background: transparent;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:16px;height:16px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> T&eacute;l&eacute;charger le rapport complet (7 pages, PDF)</a></div>
+
+    <div class="section-subtitle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> Indicateurs cl&eacute;s FM-LS (2022)</div>
+    <p>Le diagnostic situe FM-LS face &agrave; son secteur&nbsp;: chiffre d&rsquo;affaires de 743,7&nbsp;M&euro; (+8,1&nbsp;% vs 2021), profitabilit&eacute; nette de 1,04&nbsp;% (secteur&nbsp;: 1,3&nbsp;%), VA/CA de 20,3&nbsp;% sup&eacute;rieure au secteur (17,2&nbsp;%), mais charges de personnel absorbant 76,9&nbsp;% de la VA (vs 68,1&nbsp;%). C&ocirc;t&eacute; productivit&eacute;, le CA par salari&eacute; atteint 326&nbsp;760&nbsp;&euro; (+19,7&nbsp;% vs 2019) et la VA par salari&eacute; 66&nbsp;489&nbsp;&euro; (+20,0&nbsp;%). Un profil globalement sain, port&eacute; par une bonne dynamique commerciale, mais &agrave; surveiller sur la pression des charges et la d&eacute;gradation de l&rsquo;EBE.</p>
+  </div>
+
+  <div class="content-section fade-up"><div class="content-section-header"><div class="content-section-num num-pink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="width:18px;height:18px;"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg></div><h2 class="content-section-title">Comp&eacute;tences mobilis&eacute;es</h2></div>
+    <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:0.75rem; font-weight:600;">Apprentissages critiques</p>
+    <div class="competence-grid">
+      <span class="competence-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m9 12 2 2 4-4"/></svg> AC13.02 &ndash; Contextualiser ses donn&eacute;es</span>
+      <span class="competence-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m9 12 2 2 4-4"/></svg> AC13.03 &ndash; Mettre en &eacute;vidence des r&eacute;sultats cl&eacute;s par des indicateurs pertinents</span>
+      <span class="competence-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m9 12 2 2 4-4"/></svg> AC13.04 &ndash; Expliciter la d&eacute;marche suivie lors de la restitution</span>
+      <span class="competence-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m9 12 2 2 4-4"/></svg> AC13.05 &ndash; Int&eacute;r&ecirc;ts de la data visualisation et de l&rsquo;infographie</span>
+    </div>
+    <p style="font-size:0.85rem; color:var(--text-muted); margin: 1rem 0 0.75rem; font-weight:600;">Ressources mobilis&eacute;es</p>
+    <div class="competence-grid">
+      <span class="competence-chip highlight"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m9 12 2 2 4-4"/></svg> R2.11 &ndash; &Eacute;tude des donn&eacute;es de l&rsquo;environnement entrepreneurial et &eacute;conomique</span>
+      <span class="competence-chip highlight"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m9 12 2 2 4-4"/></svg> R2.12 &ndash; Projet Personnel et Professionnel 2</span>
+    </div>
+    <p style="font-size:0.85rem; color:var(--text-muted); margin: 1rem 0 0.75rem; font-weight:600;">Comp&eacute;tences techniques</p>
+    <div class="competence-grid">
+      <span class="competence-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m9 12 2 2 4-4"/></svg> Calcul des Soldes Interm&eacute;diaires de Gestion (SIG)</span>
+      <span class="competence-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m9 12 2 2 4-4"/></svg> Construction de ratios de performance (profitabilit&eacute;, productivit&eacute;)</span>
+      <span class="competence-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m9 12 2 2 4-4"/></svg> Comparaison aux moyennes sectorielles</span>
+      <span class="competence-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m9 12 2 2 4-4"/></svg> Conception de tableau de bord (double axe, radar, empil&eacute;, KPI)</span>
+      <span class="competence-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m9 12 2 2 4-4"/></svg> Diagnostic financier structur&eacute;</span>
+    </div>
+  </div>
+
+  <div class="content-section fade-up"><div class="content-section-header"><div class="content-section-num num-pink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="width:18px;height:18px;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div><h2 class="content-section-title">Difficult&eacute;s rencontr&eacute;es</h2></div>
+    <div class="difficulty-card"><h4><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg> Interpr&eacute;tation &eacute;conomique</h4><p>La plus grande difficult&eacute; n&rsquo;&eacute;tait pas le calcul des indicateurs, mais leur interpr&eacute;tation &eacute;conomique. Rep&eacute;rer des fluctuations dans les chiffres est une chose&nbsp;; comprendre ce qui les a engendr&eacute;es (impact du COVID-19 sur le CA 2021, hausse des mati&egrave;res premi&egrave;res sur l&rsquo;EBE, lien entre r&eacute;duction des effectifs et gains de productivit&eacute;) en est une autre. Ce travail de recherche minutieux, qui consiste &agrave; remonter des chiffres vers les causes, a &eacute;t&eacute; tr&egrave;s formateur.</p></div>
+    <div class="difficulty-card"><h4><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg> Choix des KPI et des repr&eacute;sentations</h4><p>S&eacute;lectionner les indicateurs les plus pertinents parmi la multitude de ratios possibles, puis choisir la repr&eacute;sentation graphique adapt&eacute;e &agrave; chacun (barres pour les &eacute;volutions, double axe pour croiser montants et taux, radar pour comparer deux ann&eacute;es, empil&eacute; pour le partage de la VA) a demand&eacute; une r&eacute;flexion approfondie. Chaque choix devait &ecirc;tre justifi&eacute; par sa pertinence d&eacute;cisionnelle, pas simplement par son esth&eacute;tique.</p></div>
+    <div class="difficulty-card"><h4><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg> Synth&egrave;se visuelle</h4><p>Faire tenir une analyse compl&egrave;te (activit&eacute;, profitabilit&eacute;, SIG, partage de la VA, productivit&eacute;) sur un seul tableau de bord lisible et &eacute;quilibr&eacute; a &eacute;t&eacute; un exercice de hi&eacute;rarchisation exigeant. Il fallait que chaque bloc soit autonome tout en contribuant &agrave; une vision d&rsquo;ensemble coh&eacute;rente.</p></div>
+  </div>
+
+  <div class="content-section fade-up"><div class="content-section-header"><div class="content-section-num num-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="width:18px;height:18px;"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div><h2 class="content-section-title">Ce que j&rsquo;ai appris</h2></div>
+    <div class="learning-block"><h4>Savoir-faire acquis</h4><p>Cette SA&Eacute; m&rsquo;a permis de d&eacute;velopper des comp&eacute;tences en analyse financi&egrave;re appliqu&eacute;e&nbsp;: calcul des SIG (marge commerciale, VA, EBE, REX), construction de ratios de performance (profitabilit&eacute;, productivit&eacute;, partage de la VA) et comparaison aux moyennes sectorielles. J&rsquo;ai aussi appris &agrave; concevoir un tableau de bord visuel int&eacute;grant des repr&eacute;sentations graphiques vari&eacute;es et adapt&eacute;es aux donn&eacute;es, et &agrave; formuler un diagnostic financier structur&eacute; mettant en &eacute;vidence les points forts et les points de vigilance d&rsquo;une entreprise.</p></div>
+    <div class="learning-block"><h4>Savoir-&ecirc;tre d&eacute;velopp&eacute;s</h4><p>Ce projet a renforc&eacute; ma rigueur d&rsquo;analyse et mon sens critique face aux donn&eacute;es financi&egrave;res. J&rsquo;ai compris qu&rsquo;un indicateur isol&eacute; ne dit rien&nbsp;: c&rsquo;est sa mise en contexte (comparaison temporelle, comparaison sectorielle, croisement avec d&rsquo;autres indicateurs) qui lui donne son sens. La r&eacute;daction du diagnostic m&rsquo;a aussi appris &agrave; formuler des conclusions nuanc&eacute;es et &agrave; expliciter la d&eacute;marche suivie (AC13.04), comp&eacute;tence essentielle pour communiquer des r&eacute;sultats &agrave; un d&eacute;cideur.</p></div>
+    <div class="learning-block"><h4>Ce que je ferais diff&eacute;remment</h4><p>Avec le recul, j&rsquo;aurais compl&eacute;t&eacute; l&rsquo;analyse par une comparaison plus pouss&eacute;e avec des concurrents directs de Fleury Michon (Herta, Madrange) pour mieux situer la performance relative de l&rsquo;entreprise. J&rsquo;aurais &eacute;galement pu int&eacute;grer un volet pr&eacute;visionnel dans le tableau de bord (projections pour FM-LS). Mais dans l&rsquo;ensemble, cette SA&Eacute; a &eacute;t&eacute; une recherche tr&egrave;s stimulante qui m&rsquo;a montr&eacute; concr&egrave;tement comment les donn&eacute;es financi&egrave;res permettent d&rsquo;&eacute;valuer la sant&eacute; d&rsquo;une entreprise et d&rsquo;orienter des d&eacute;cisions strat&eacute;giques.</p></div>
+  </div>
+
+</div></div>
+<svg class="wave-divider" viewBox="0 0 1440 60" preserveAspectRatio="none">
+  <path d="M0,30 C240,55 480,5 720,35 C960,55 1200,10 1440,25 L1440,0 L0,0 Z" fill="var(--white-warm)"/>
+</svg>
+
+<div class="back-projects">
+  <a href="../index.html#projets" class="btn btn-primary">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    Retour aux projets
+  </a>
+</div>
+
+<footer>
+  <p>&copy; 2026 Manon de Matha &middot; Portfolio BUT Science des Donn&eacute;es &middot; Fait avec passion</p>
+</footer>
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+  const nav = document.getElementById('navbar');
+  window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 20));
+  function openLightbox(img) {
+    const lb = document.getElementById('lightbox');
+    document.getElementById('lightbox-img').src = img.src;
+    lb.classList.add('active');
+  }
+  document.getElementById('lightbox').addEventListener('click', function(e) {
+    if (e.target !== document.getElementById('lightbox-img')) this.classList.remove('active');
+  });
+  const carousels = {};
+  function initCarousel(id) {
+    const container = document.getElementById(id);
+    if (!container) return;
+    const track = container.querySelector('.carousel-track');
+    const slides = container.querySelectorAll('.carousel-slide');
+    const dotsContainer = document.getElementById(id + '-dots');
+    carousels[id] = { track, slides, current: 0 };
+    slides.forEach((_, i) => {
+      const dot = document.createElement('button');
+      dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+      dot.onclick = () => goToSlide(id, i);
+      dotsContainer.appendChild(dot);
+    });
+  }
+  function goToSlide(id, index) {
+    const c = carousels[id];
+    if (!c) return;
+    c.current = index;
+    c.track.style.transform = 'translateX(-' + (index * 100) + '%)';
+    const dots = document.getElementById(id + '-dots').querySelectorAll('.carousel-dot');
+    dots.forEach((d, i) => d.classList.toggle('active', i === index));
+  }
+  function moveCarousel(id, dir) {
+    const c = carousels[id];
+    if (!c) return;
+    let next = c.current + dir;
+    if (next < 0) next = c.slides.length - 1;
+    if (next >= c.slides.length) next = 0;
+    goToSlide(id, next);
+  }
+  initCarousel('carousel-rapport');
+</script>
+</body>
+</html>

@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SAÉ 1.01 – Passe ou Casse | Manon de Matha</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green-main: #7A9E7E;
+    --green-dark: #4F6F52;
+    --green-light: #a8c5ab;
+    --green-pale: #d4e4d6;
+    --pink-soft: #E8B4B8;
+    --pink-accent: #D98C95;
+    --gold-soft: #E5C488;
+    --gold-main: #C9A86A;
+    --gold-dark: #A68A4C;
+    --beige: #F5EFE6;
+    --white-warm: #FAF8F5;
+    --text: #2E2E2E;
+    --text-light: #5a5a5a;
+    --text-muted: #8a8a7e;
+    --font-display: 'Cormorant Garamond', Georgia, serif;
+    --font-body: 'Nunito', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--font-body);
+    color: var(--text);
+    background: var(--beige);
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ═══════════ NAV ═══════════ */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(245, 239, 230, 0.88);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(122, 158, 126, 0.12);
+  }
+  nav.scrolled { box-shadow: 0 2px 24px rgba(79, 111, 82, 0.08); }
+  .nav-inner {
+    max-width: 1200px; margin: 0 auto; padding: 0 2rem;
+    display: flex; align-items: center; justify-content: space-between; height: 64px;
+  }
+  .nav-logo {
+    font-family: var(--font-display); font-size: 1.35rem; font-weight: 600;
+    color: var(--green-dark); text-decoration: none; display: flex; align-items: center; gap: 8px;
+  }
+  .nav-logo svg { width: 22px; height: 22px; }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a {
+    font-size: 0.82rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--text-light); text-decoration: none; position: relative; padding: 4px 0; transition: color 0.3s;
+  }
+  .nav-links a::after {
+    content: ''; position: absolute; bottom: -2px; left: 0;
+    width: 0; height: 2px; background: var(--pink-accent); border-radius: 1px; transition: width 0.3s;
+  }
+  .nav-links a:hover { color: var(--green-dark); }
+  .nav-links a.active { color: var(--green-dark); }
+  .nav-links a:hover::after { width: 100%; }
+  .nav-links a.active::after { width: 100%; }
+
+  /* ═══════════ ANIMATIONS ═══════════ */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .fade-up {
+    opacity: 0; transform: translateY(24px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+    animation: fallbackVisible 0s 2s forwards;
+  }
+  @keyframes fallbackVisible {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+  .content-section.fade-up, .screenshot-grid, .screenshot-item, .project-hero, .project-hero-grid { 
+    opacity: 1 !important; transform: translateY(0) !important; 
+  }
+
+  /* ═══════════ PROJECT HERO ═══════════ */
+  .project-hero {
+    padding: 120px 2rem 3rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .project-breadcrumb {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1.5rem;
+  }
+  .project-breadcrumb a {
+    color: var(--green-main); text-decoration: none; font-weight: 600;
+    transition: color 0.3s;
+  }
+  .project-breadcrumb a:hover { color: var(--green-dark); }
+  .project-breadcrumb svg { width: 14px; height: 14px; }
+
+  .project-hero-grid {
+    display: grid; grid-template-columns: 1fr 340px; gap: 3rem; align-items: start;
+  }
+
+  .project-meta-tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 5px 14px; border-radius: 20px;
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+  .project-meta-tag.c1 { background: rgba(122, 158, 126, 0.15); color: var(--green-dark); }
+  .project-meta-tag.c2 { background: rgba(201, 168, 106, 0.2); color: var(--gold-dark); }
+  .project-meta-tag.c3 { background: rgba(232, 180, 184, 0.22); color: var(--pink-accent); }
+  .project-meta-tag .sep { opacity: 0.5; font-weight: 400; }
+  .project-hero-title {
+    font-family: var(--font-display); font-size: clamp(2.2rem, 4vw, 3rem);
+    font-weight: 700; color: var(--green-dark); line-height: 1.15; margin-bottom: 0.75rem;
+  }
+  .project-hero-subtitle {
+    font-family: var(--font-display); font-size: 1.15rem; font-weight: 500;
+    font-style: italic; color: var(--green-main); margin-bottom: 1.5rem;
+  }
+  .project-hero-desc {
+    font-size: 0.95rem; color: var(--text-light); line-height: 1.75; margin-bottom: 1.5rem;
+  }
+
+  /* Info sidebar card */
+  .project-info-card {
+    background: var(--white-warm); border-radius: 20px; padding: 2rem;
+    border: 1px solid rgba(122, 158, 126, 0.1);
+    box-shadow: 0 4px 20px rgba(79, 111, 82, 0.06);
+    position: sticky; top: 90px;
+  }
+  .project-info-card h4 {
+    font-family: var(--font-display); font-size: 1.1rem; font-weight: 600;
+    color: var(--green-dark); margin-bottom: 1.2rem;
+    padding-bottom: 0.75rem; border-bottom: 1px solid rgba(122, 158, 126, 0.1);
+  }
+  .info-row {
+    display: flex; align-items: flex-start; gap: 12px; margin-bottom: 1rem;
+  }
+  .info-row:last-child { margin-bottom: 0; }
+  .info-row svg {
+    width: 18px; height: 18px; color: var(--green-main); flex-shrink: 0; margin-top: 2px;
+  }
+  .info-label {
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em;
+    text-transform: uppercase; color: var(--text-muted); margin-bottom: 2px;
+  }
+  .info-value { font-size: 0.88rem; color: var(--text); font-weight: 500; }
+
+  .tools-list {
+    display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px;
+  }
+  .tool-tag {
+    padding: 3px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 600;
+    display: inline-flex; align-items: center; gap: 5px;
+  }
+  /* Primary tool - solid green */
+  .tool-tag.primary { background: rgba(122, 158, 126, 0.18); color: var(--green-dark); }
+  /* Secondary tool - outlined green */
+  .tool-tag.secondary {
+    background: transparent; color: var(--green-main);
+    border: 1px solid rgba(122, 158, 126, 0.35);
+    padding: 2px 9px;
+  }
+  /* External resource - pink */
+  .tool-tag.external { background: rgba(232, 180, 184, 0.2); color: var(--pink-accent); }
+  /* Legacy support */
+  .tool-tag.green { background: rgba(122, 158, 126, 0.18); color: var(--green-dark); }
+  .tool-tag.pink { background: rgba(232, 180, 184, 0.2); color: var(--pink-accent); }
+
+  /* ═══════════ CONTENT SECTIONS ═══════════ */
+  .project-content {
+    max-width: 860px; margin: 0 auto; padding: 0 2rem 4rem;
+  }
+
+  .content-section {
+    margin-bottom: 3rem;
+  }
+  .content-section-header {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 1.2rem;
+  }
+  .content-section-num {
+    width: 36px; height: 36px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display); font-size: 1rem; font-weight: 700;
+    flex-shrink: 0;
+  }
+  .num-green { background: rgba(122, 158, 126, 0.14); color: var(--green-dark); }
+  .num-pink { background: rgba(232, 180, 184, 0.18); color: var(--pink-accent); }
+  .content-section-title {
+    font-family: var(--font-display); font-size: 1.4rem; font-weight: 600;
+    color: var(--green-dark);
+  }
+
+  .content-section p {
+    font-size: 0.92rem; color: var(--text-light); line-height: 1.75; margin-bottom: 0.75rem;
+  }
+  .content-section p:last-child { margin-bottom: 0; }
+
+  .problematique-box {
+    background: var(--white-warm); border-left: 3px solid var(--pink-accent);
+    border-radius: 0 16px 16px 0; padding: 1.3rem 1.6rem; margin: 1rem 0;
+    font-family: var(--font-display); font-size: 1.05rem; font-style: italic;
+    color: var(--green-dark); line-height: 1.55;
+  }
+
+  /* Steps */
+  .step-block {
+    position: relative; padding-left: 28px; margin-bottom: 1.5rem;
+  }
+  .step-block::before {
+    content: ''; position: absolute; left: 6px; top: 28px; bottom: -12px;
+    width: 2px; background: var(--green-pale); border-radius: 2px;
+  }
+  .step-block:last-child::before { display: none; }
+  .step-dot {
+    position: absolute; left: 0; top: 6px;
+    width: 14px; height: 14px; border-radius: 50%;
+    border: 2.5px solid var(--green-main); background: var(--beige);
+  }
+  .step-block:nth-child(even) .step-dot { border-color: var(--pink-accent); }
+  .step-title {
+    font-family: var(--font-display); font-size: 1.1rem; font-weight: 600;
+    color: var(--green-dark); margin-bottom: 0.4rem;
+  }
+  .step-block p {
+    font-size: 0.88rem; color: var(--text-light); line-height: 1.7;
+  }
+
+  /* Screenshots */
+  .screenshot-grid {
+    display: grid; grid-template-columns: 1fr; gap: 2rem; margin: 1.5rem 0;
+  }
+  .screenshot-item {
+    border-radius: 16px; overflow: hidden;
+    border: 1px solid rgba(122, 158, 126, 0.1);
+    box-shadow: 0 4px 16px rgba(79, 111, 82, 0.06);
+    background: var(--white-warm);
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  .screenshot-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(79, 111, 82, 0.1);
+  }
+  .screenshot-item img {
+    width: 100%; display: block; cursor: pointer;
+  }
+  .screenshot-caption {
+    padding: 0.75rem 1.2rem;
+    font-size: 0.8rem; font-weight: 600; color: var(--text-muted);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .screenshot-caption svg { width: 14px; height: 14px; color: var(--green-main); }
+
+  /* YouTube embed */
+  .video-container {
+    position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;
+    border-radius: 16px; margin: 1.5rem 0;
+    box-shadow: 0 4px 20px rgba(79, 111, 82, 0.1);
+    border: 1px solid rgba(122, 158, 126, 0.1);
+  }
+  .video-container iframe {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    border: none; border-radius: 16px;
+  }
+
+  /* Competences chips */
+  .competence-grid {
+    display: flex; flex-wrap: wrap; gap: 8px; margin: 1rem 0;
+  }
+  .competence-chip {
+    padding: 6px 14px; border-radius: 20px;
+    font-size: 0.78rem; font-weight: 600;
+    background: rgba(122, 158, 126, 0.1); color: var(--green-dark);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .competence-chip svg { width: 12px; height: 12px; }
+  .competence-chip.highlight {
+    background: rgba(232, 180, 184, 0.18); color: var(--pink-accent);
+  }
+
+  /* Difficulty cards */
+  .difficulty-card {
+    background: var(--white-warm); border-radius: 16px; padding: 1.3rem 1.5rem;
+    margin-bottom: 1rem; border: 1px solid rgba(122, 158, 126, 0.08);
+  }
+  .difficulty-card h4 {
+    font-family: var(--font-display); font-size: 1.05rem; font-weight: 600;
+    color: var(--green-dark); margin-bottom: 0.4rem;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .difficulty-card h4 svg { width: 16px; height: 16px; color: var(--pink-accent); }
+  .difficulty-card p {
+    font-size: 0.85rem; color: var(--text-light); line-height: 1.65;
+  }
+
+  /* Learnings */
+  .learning-block {
+    background: linear-gradient(135deg, rgba(122, 158, 126, 0.06), rgba(232, 180, 184, 0.06));
+    border-radius: 20px; padding: 2rem; margin: 1.5rem 0;
+    border: 1px solid rgba(122, 158, 126, 0.1);
+  }
+  .learning-block h4 {
+    font-family: var(--font-display); font-size: 1.1rem; font-weight: 600;
+    color: var(--green-dark); margin-bottom: 0.75rem;
+  }
+  .learning-block p {
+    font-size: 0.88rem; color: var(--text-light); line-height: 1.7; margin-bottom: 0.6rem;
+  }
+  .learning-block p:last-child { margin-bottom: 0; }
+
+  /* Back to projects button */
+  .back-projects {
+    display: flex; justify-content: center; padding: 2rem 0 4rem;
+  }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 12px 28px; border-radius: 50px;
+    font-family: var(--font-body); font-size: 0.88rem; font-weight: 600;
+    text-decoration: none; cursor: pointer; border: none; transition: all 0.35s;
+  }
+  .btn svg { width: 16px; height: 16px; }
+  .btn-primary { background: var(--green-dark); color: var(--white-warm); }
+  .btn-primary:hover {
+    background: var(--green-main); transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(79, 111, 82, 0.2);
+  }
+  .btn-secondary {
+    background: transparent; color: var(--green-dark); border: 1.5px solid var(--green-main);
+  }
+  .btn-secondary:hover {
+    background: var(--green-dark); color: var(--white-warm); border-color: var(--green-dark);
+  }
+
+  /* Footer */
+  footer {
+    background: var(--green-dark); color: rgba(255,255,255,0.6);
+    text-align: center; padding: 2rem; font-size: 0.82rem;
+  }
+  footer a { color: var(--pink-soft); text-decoration: none; }
+
+  /* Lightbox */
+  .lightbox {
+    display: none; position: fixed; inset: 0; z-index: 200;
+    background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+    align-items: center; justify-content: center; cursor: pointer;
+  }
+  .lightbox.active { display: flex; }
+  .lightbox img {
+    max-width: 92vw; max-height: 90vh; border-radius: 12px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.3);
+  }
+  .lightbox-close {
+    position: absolute; top: 20px; right: 24px;
+    color: white; font-size: 2rem; cursor: pointer; opacity: 0.7;
+    transition: opacity 0.3s;
+  }
+  .lightbox-close:hover { opacity: 1; }
+
+  /* Wave divider */
+  .wave-divider { width: 100%; height: 60px; margin: -1px 0; }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .project-hero-grid { grid-template-columns: 1fr; }
+    .project-info-card { position: static; }
+    .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="navbar">
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-logo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10"/><path d="M12 2c2 3 3 6.5 3 10s-1 7-3 10"/>
+        <path d="M12 2c-2 3-3 6.5-3 10s1 7 3 10"/><path d="M2 12h10"/><path d="M17 8l-1 8"/><path d="M20 6l-1 12"/>
+      </svg>
+      Manon de Matha
+    </a>
+    <ul class="nav-links">
+      <li><a href="../index.html#accueil">Accueil</a></li>
+      <li><a href="../index.html#apropos">À propos</a></li>
+      <li><a href="../index.html#projets" class="active">Projets</a></li>
+      <li><a href="../index.html#competences">Compétences</a></li>
+      <li><a href="../index.html#bilan">Bilan</a></li>
+      <li><a href="../index.html#contact">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <span class="lightbox-close">&times;</span>
+  <img id="lightbox-img" src="" alt="">
+</div>
+
+<!-- PROJECT HERO -->
+<section class="project-hero">
+  <div class="project-breadcrumb fade-up">
+    <a href="../index.html">Accueil</a>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+    <a href="../index.html#projets" class="active">Projets</a>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+    <span>SAÉ 1.01</span>
+  </div>
+
+  <div class="project-hero-grid">
+    <div class="fade-up">
+      <span class="project-meta-tag c1">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:14px;height:14px;"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        SA&Eacute; 1.01 <span class="sep">&middot;</span> S1 <span class="sep">&middot;</span> C1 Traiter
+      </span>
+      <h1 class="project-hero-title">« Passe ou Casse »</h1>
+      <p class="project-hero-subtitle">Outil de gestion des notes BUT SD sous Excel & VBA</p>
+      <p class="project-hero-desc">
+        Conception d'une application complète de suivi des notes intégrant l'ensemble des règles de gestion du BUT SD : coefficients, compensation entre compétences, gestion des ABI, décision de jury automatisée et tableau de bord dynamique.
+      </p>
+    </div>
+
+    <div class="project-info-card fade-up" style="transition-delay: 0.15s;">
+      <h4>Informations</h4>
+      <div class="info-row">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        <div>
+          <p class="info-label">Année</p>
+          <p class="info-value">2025 – 2026 (S1)</p>
+        </div>
+      </div>
+      <div class="info-row">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M8 14l2 2 4-4"/></svg>
+        <div><p class="info-label">Date de rendu</p><p class="info-value">Déc. 2025</p></div>
+      </div>
+      <div class="info-row">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <div>
+          <p class="info-label">Cadre</p>
+          <p class="info-value">Binôme avec Mathéo</p>
+        </div>
+      </div>
+      <div class="info-row">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        <div>
+          <p class="info-label">Livrable</p>
+          <p class="info-value">Application Excel + oral individuel</p>
+        </div>
+      </div>
+      <div class="info-row">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+        <div>
+          <p class="info-label">Outils</p>
+          <div class="tools-list">
+            <span class="tool-tag primary">Excel</span>
+            <span class="tool-tag primary">VBA</span>
+            <span class="tool-tag external">YouTube</span>
+          </div>
+        </div>
+      </div>
+      <div class="info-row">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
+        <div>
+          <p class="info-label">SAÉ</p>
+          <p class="info-value">Reporting à partir de données stockées dans un SGBD relationnel</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WAVE -->
+<svg class="wave-divider" viewBox="0 0 1440 60" preserveAspectRatio="none">
+  <path d="M0,30 C360,55 720,5 1080,35 C1260,50 1380,20 1440,30 L1440,60 L0,60 Z" fill="var(--white-warm)"/>
+</svg>
+
+
+<!-- PROJECT CONTENT -->
+<div style="background: var(--white-warm);">
+<div class="project-content" style="padding-top: 3rem;">
+
+  <!-- Contexte -->
+  <div class="content-section fade-up">
+    <div class="content-section-header">
+      <div class="content-section-num num-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="width:18px;height:18px;"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div>
+      <h2 class="content-section-title">Contexte & objectifs</h2>
+    </div>
+    <p>L'objectif de cette SAÉ était de concevoir un outil personnel de gestion des notes pour le BUT SD1 sous Excel. L'application devait permettre de saisir ses notes au fil de l'année, de visualiser ses résultats via un tableau de bord dynamique, et d'obtenir automatiquement la décision de jury (passage en 2ème année, compétences validées, parcours conseillé). Le tout devait être ergonomique, intuitif et fidèle aux règles de gestion du BUT SD : coefficients par module, compensation entre compétences, gestion des ABI.</p>
+    <p>Travail réalisé en binôme avec Mathéo. Livrable Excel à rendre sur Updago avant le 21 décembre 2025. Évaluation portant pour moitié sur la qualité technique (opérationnalité, optimisation, ergonomie, VBA) et pour moitié sur un oral individuel.</p>
+  </div>
+
+  <!-- Problématique -->
+  <div class="content-section fade-up">
+    <div class="content-section-header">
+      <div class="content-section-num num-pink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="width:18px;height:18px;"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+      <h2 class="content-section-title">Problématique</h2>
+    </div>
+    <div class="problematique-box">
+      Comment concevoir un outil de suivi des notes à la fois fonctionnel, ergonomique et automatisé, intégrant l'ensemble des règles de gestion du BUT SD (coefficients, compensations entre compétences, gestion des ABI) tout en restant accessible et intuitif pour l'utilisateur ?
+    </div>
+  </div>
+
+  <!-- Réalisation -->
+  <div class="content-section fade-up">
+    <div class="content-section-header">
+      <div class="content-section-num num-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="width:18px;height:18px;"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <h2 class="content-section-title">Réalisation</h2>
+    </div>
+
+    <div class="step-block">
+      <div class="step-dot"></div>
+      <h3 class="step-title">Étape 1 – Jeu de données test</h3>
+      <p>Constitution d'un jeu de données réaliste comprenant tous les modules des deux semestres avec leurs coefficients, masqué à l'utilisateur final. Accessible via un bouton « Jeu d'essai » pour tester rapidement l'ensemble des fonctionnalités.</p>
+    </div>
+
+    <div class="step-block">
+      <div class="step-dot"></div>
+      <h3 class="step-title">Étape 2 – Feuille de calcul (cœur technique)</h3>
+      <p>Feuille masquée récupérant automatiquement les notes pour calculer les moyennes pondérées par module, compétence et semestre. Intègre la compensation annuelle, le décompte des blocs selon les seuils (8 et 10) et la décision automatique de passage. Grande rigueur exigée pour éviter toute erreur en cascade.</p>
+    </div>
+
+    <div class="step-block">
+      <div class="step-dot"></div>
+      <h3 class="step-title">Étape 3 – Interface utilisateur (VBA)</h3>
+      <p>Développement complet en VBA via des Userform. Six boutons d'action, formulaires avec listes déroulantes dynamiques et liées (semestre → compétence → module). Gestion des ABI avec possibilité de simuler l'impact sur la décision de jury.</p>
+    </div>
+
+    <div class="step-block">
+      <div class="step-dot"></div>
+      <h3 class="step-title">Étape 4 – Tableau de bord & décision de jury</h3>
+      <p>Tableau de bord synthétique : moyenne annuelle, profil de parcours conseillé, radar S1/S2, histogramme par compétence avec compensation, diagramme circulaire des blocs. Page « Décision de jury » avec verdict final, code couleur et rappel des conditions.</p>
+    </div>
+
+    <div class="step-block">
+      <div class="step-dot"></div>
+      <h3 class="step-title">Étape 5 – Guide d'utilisation vidéo</h3>
+      <p>Réalisation d'un tutoriel vidéo complet montrant l'utilisation de l'application, publié sur YouTube.</p>
+    </div>
+  </div>
+
+  <!-- Résultats & preuves -->
+  <div class="content-section fade-up">
+    <div class="content-section-header">
+      <div class="content-section-num num-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="width:18px;height:18px;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>
+      <h2 class="content-section-title">Résultats & preuves</h2>
+    </div>
+
+    <div class="screenshot-grid">
+      <div class="screenshot-item">
+        <img src="../images/sae101/sae101-menu.png" alt="Menu principal Passe ou Casse" onclick="openLightbox(this)">
+        <div class="screenshot-caption">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          Menu principal – 6 actions, pictogrammes colorés, identité visuelle IUT intégrée
+        </div>
+      </div>
+
+      <div class="screenshot-item">
+        <img src="../images/sae101/sae101-dashboard.png" alt="Tableau de bord" onclick="openLightbox(this)">
+        <div class="screenshot-caption">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          Tableau de bord – moyenne annuelle (11,41), profil VCOD, radar S1/S2, histogramme, diagramme circulaire
+        </div>
+      </div>
+
+      <div class="screenshot-item">
+        <img src="../images/sae101/sae101-jury.png" alt="Décision de jury" onclick="openLightbox(this)">
+        <div class="screenshot-caption">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          Décision de jury – verdict « Admis en BUT 2 », moyennes par compétence avec code couleur
+        </div>
+      </div>
+
+      <div class="screenshot-item">
+        <img src="../images/sae101/sae101-calcul.png" alt="Feuille de calcul masquée" onclick="openLightbox(this)">
+        <div class="screenshot-caption">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          En coulisses – feuille de calcul masquée : coefficients, moyennes pondérées, compensation et décision automatique
+        </div>
+      </div>
+
+      <div class="screenshot-item">
+        <img src="../images/sae101/sae101-bdd.png" alt="Base de données" onclick="openLightbox(this)">
+        <div class="screenshot-caption">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          Base de données – structure tabulaire (semestre, compétence, ressource, note)
+        </div>
+      </div>
+    </div>
+
+    <!-- YouTube embed -->
+    <h3 style="font-family: var(--font-display); font-size: 1.15rem; font-weight: 600; color: var(--green-dark); margin: 2rem 0 0.75rem; display: flex; align-items: center; gap: 10px;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:20px;height:20px;color:var(--pink-accent);"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      Guide d'utilisation vidéo
+    </h3>
+    <div class="video-container" style="padding-bottom:0; height:auto;">
+      <a href="https://www.youtube.com/watch?v=W2KlQTIC848" target="_blank" rel="noopener" style="display:block; position:relative; border-radius:16px; overflow:hidden; aspect-ratio:16/9;">
+        <img src="https://img.youtube.com/vi/W2KlQTIC848/maxresdefault.jpg" alt="Voir le guide d'utilisation sur YouTube" style="width:100%; display:block; border-radius:16px;">
+        <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.3); transition:background 0.3s;">
+          <svg viewBox="0 0 68 48" style="width:68px; height:48px;"><path d="M66.52 7.74c-.78-2.93-2.49-5.41-5.42-6.19C55.79.13 34 0 34 0S12.21.13 6.9 1.55c-2.93.78-4.64 3.26-5.42 6.19C.06 13.05 0 24 0 24s.06 10.95 1.48 16.26c.78 2.93 2.49 5.41 5.42 6.19C12.21 47.87 34 48 34 48s21.79-.13 27.1-1.55c2.93-.78 4.64-3.26 5.42-6.19C67.94 34.95 68 24 68 24s-.06-10.95-1.48-16.26z" fill="red"/><path d="M45 24L27 14v20" fill="white"/></svg>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Compétences mobilisées -->
+  <div class="content-section fade-up">
+    <div class="content-section-header">
+      <div class="content-section-num num-pink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="width:18px;height:18px;"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg></div>
+      <h2 class="content-section-title">Compétences mobilisées</h2>
+    </div>
+    <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:0.75rem; font-weight:600;">Apprentissages critiques</p>
+    <div class="competence-grid">
+      <span class="competence-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m9 12 2 2 4-4"/></svg> AC11.01 – Interpréter le besoin du commanditaire</span>
+      <span class="competence-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m9 12 2 2 4-4"/></svg> AC11.02 – Respecter les formalismes de notation</span>
+      <span class="competence-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m9 12 2 2 4-4"/></svg> AC11.03 – Connaître et utiliser la syntaxe des langages</span>
+      <span class="competence-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m9 12 2 2 4-4"/></svg> AC11.04 – Maîtriser la structure des données à exploiter</span>
+    </div>
+    <p style="font-size:0.85rem; color:var(--text-muted); margin: 1rem 0 0.75rem; font-weight:600;">Ressources mobilisées</p>
+    <div class="competence-grid">
+      <span class="competence-chip highlight"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m9 12 2 2 4-4"/></svg> R1.01 – Tableur et reporting</span>
+      <span class="competence-chip highlight"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m9 12 2 2 4-4"/></svg> R1.02 – Bases de données relationnelles 1</span>
+      <span class="competence-chip highlight"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m9 12 2 2 4-4"/></svg> R1.10 – Projet Personnel et Professionnel 1</span>
+    </div>
+    <p style="font-size:0.85rem; color:var(--text-muted); margin: 1rem 0 0.75rem; font-weight:600;">Compétences techniques</p>
+    <div class="competence-grid">
+      <span class="competence-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m9 12 2 2 4-4"/></svg> Excel (formules avancées, TCD, graphiques)</span>
+      <span class="competence-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m9 12 2 2 4-4"/></svg> VBA (Userform, macros, listes dynamiques)</span>
+      <span class="competence-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m9 12 2 2 4-4"/></svg> Tableaux de bord dynamiques</span>
+      <span class="competence-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m9 12 2 2 4-4"/></svg> Réalisation vidéo (tutoriel YouTube)</span>
+    </div>
+  </div>
+
+  <!-- Difficultés -->
+  <div class="content-section fade-up">
+    <div class="content-section-header">
+      <div class="content-section-num num-pink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="width:18px;height:18px;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+      <h2 class="content-section-title">Difficultés rencontrées</h2>
+    </div>
+
+    <div class="difficulty-card">
+      <h4><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg> Compréhension du contexte</h4>
+      <p>La première difficulté a été de cerner l'ensemble des règles de gestion du BUT SD : les coefficients par module, le système de compensation entre compétences sur l'année, le fonctionnement des ABI (absences injustifiées), les seuils de passage (moyenne ≥ 10 dans au moins deux compétences, aucune compétence strictement inférieure à 8). Il fallait tout anticiper pour que l'outil couvre la totalité des cas de figure possibles, y compris les situations limites.</p>
+    </div>
+
+    <div class="difficulty-card">
+      <h4><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg> Conception technique</h4>
+      <p>Concevoir une base de données stratégique sous Excel s'est révélé plus complexe que prévu. Il fallait penser simultanément à la facilité de saisie par l'utilisateur et à la capacité de la feuille de calcul à retrouver chaque note pour appliquer les bons coefficients. La feuille de calcul elle-même a exigé un travail de rigueur intense : la moindre erreur de référence ou de coefficient faussait l'ensemble des résultats en cascade.</p>
+    </div>
+
+    <div class="difficulty-card">
+      <h4><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg> Refonte en cours de projet</h4>
+      <p>En cours de développement, nous avons réalisé que notre première structure de base de données limitait le nombre de notes saisissables, ce qui n'était pas acceptable pour un utilisateur réel. Nous avons donc dû repenser entièrement l'architecture de la base, ce qui a entraîné une refonte complète du code VBA et de la feuille de calcul en plein milieu de la SAÉ. Cette décision, bien que coûteuse en temps, s'est avérée indispensable pour la qualité finale du produit.</p>
+    </div>
+
+    <div class="difficulty-card">
+      <h4><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg> Travail collaboratif</h4>
+      <p>Au moment de fusionner nos travaux respectifs (l'interface et le moteur de calcul), nous avons rencontré des problèmes d'intégration : malgré l'utilisation d'un vocabulaire et de conventions identiques dans nos fichiers, la mise en commun ne fonctionnait pas du premier coup. Il a fallu déboguer méthodiquement les références croisées entre les Userform, la base de données et la feuille de calcul pour rétablir la cohérence de l'ensemble.</p>
+    </div>
+  </div>
+
+  <!-- Bilan réflexif -->
+  <div class="content-section fade-up">
+    <div class="content-section-header">
+      <div class="content-section-num num-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="width:18px;height:18px;"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
+      <h2 class="content-section-title">Ce que j'ai appris</h2>
+    </div>
+
+    <div class="learning-block">
+      <h4>Savoir-faire acquis</h4>
+      <p>Cette SAÉ m'a permis de développer des compétences concrètes en conception de bases de données structurées sous Excel, en développement VBA (Userform, listes déroulantes dynamiques, gestion d'événements), en création de tableaux de bord dynamiques avec des graphiques variés (radar, histogramme, diagramme circulaire), et en réalisation d'un guide d'utilisation sous forme de tutoriel vidéo. J'ai également appris à construire des formules complexes imbriquées pour automatiser des calculs métier faisant intervenir de nombreuses variables.</p>
+    </div>
+
+    <div class="learning-block">
+      <h4>Savoir-être développés</h4>
+      <p>Le travail en binôme m'a appris l'importance de la communication et de la coordination, notamment lors de la phase d'intégration. J'ai développé un sens de l'ergonomie et de l'expérience utilisateur en cherchant à rendre l'outil le plus intuitif possible. La refonte de la base de données en cours de projet m'a aussi appris à prendre des décisions difficiles quand la qualité du livrable l'exige, même si cela implique de recommencer une partie du travail.</p>
+    </div>
+
+    <div class="learning-block">
+      <h4>Ce que je ferais différemment</h4>
+      <p>Avec le recul, j'aurais consacré davantage de temps en amont à une réflexion approfondie sur les règles de gestion et l'architecture de la base de données. Mieux anticiper les besoins de l'utilisateur et les contraintes techniques dès la phase de conception nous aurait évité la refonte en cours de route et fait gagner un temps précieux.</p>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- Wave before CTA -->
+<svg class="wave-divider" viewBox="0 0 1440 60" preserveAspectRatio="none">
+  <path d="M0,30 C240,55 480,5 720,35 C960,55 1200,10 1440,25 L1440,0 L0,0 Z" fill="var(--white-warm)"/>
+</svg>
+
+<!-- Back -->
+<div class="back-projects">
+  <a href="../index.html#projets" class="btn btn-primary">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    Retour aux projets
+  </a>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <p>&copy; 2026 Manon de Matha · Portfolio BUT Science des Données · Fait avec passion</p>
+</footer>
+
+<script>
+  // Scroll animations
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) entry.target.classList.add('visible');
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+  // Nav scroll
+  const nav = document.getElementById('navbar');
+  window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 20));
+
+  // Lightbox
+  function openLightbox(img) {
+    const lb = document.getElementById('lightbox');
+    document.getElementById('lightbox-img').src = img.src;
+    lb.classList.add('active');
+  }
+  document.getElementById('lightbox').addEventListener('click', function(e) {
+    if (e.target !== document.getElementById('lightbox-img')) {
+      this.classList.remove('active');
+    }
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SAÉ 1.02 – Pollution atmosphérique | Manon de Matha</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green-main: #7A9E7E;
+    --green-dark: #4F6F52;
+    --green-light: #a8c5ab;
+    --green-pale: #d4e4d6;
+    --pink-soft: #E8B4B8;
+    --pink-accent: #D98C95;
+    --gold-soft: #E5C488;
+    --gold-main: #C9A86A;
+    --gold-dark: #A68A4C;
+    --beige: #F5EFE6;
+    --white-warm: #FAF8F5;
+    --text: #2E2E2E;
+    --text-light: #5a5a5a;
+    --text-muted: #8a8a7e;
+    --font-display: 'Cormorant Garamond', Georgia, serif;
+    --font-body: 'Nunito', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--font-body);
+    color: var(--text);
+    background: var(--beige);
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ═══════════ NAV ═══════════ */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(245, 239, 230, 0.88);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(122, 158, 126, 0.12);
+  }
+  nav.scrolled { box-shadow: 0 2px 24px rgba(79, 111, 82, 0.08); }
+  .nav-inner {
+    max-width: 1200px; margin: 0 auto; padding: 0 2rem;
+    display: flex; align-items: center; justify-content: space-between; height: 64px;
+  }
+  .nav-logo {
+    font-family: var(--font-display); font-size: 1.35rem; font-weight: 600;
+    color: var(--green-dark); text-decoration: none; display: flex; align-items: center; gap: 8px;
+  }
+  .nav-logo svg { width: 22px; height: 22px; }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a {
+    font-size: 0.82rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--text-light); text-decoration: none; position: relative; padding: 4px 0; transition: color 0.3s;
+  }
+  .nav-links a::after {
+    content: ''; position: absolute; bottom: -2px; left: 0;
+    width: 0; height: 2px; background: var(--pink-accent); border-radius: 1px; transition: width 0.3s;
+  }
+  .nav-links a:hover { color: var(--green-dark); }
+  .nav-links a.active { color: var(--green-dark); }
+  .nav-links a:hover::after { width: 100%; }
+  .nav-links a.active::after { width: 100%; }
+
+  /* ═══════════ ANIMATIONS ═══════════ */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .fade-up {
+    opacity: 0; transform: translateY(24px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+    animation: fallbackVisible 0s 2s forwards;
+  }
+  @keyframes fallbackVisible {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+  .content-section.fade-up, .screenshot-grid, .screenshot-item, .project-hero, .project-hero-grid { 
+    opacity: 1 !important; transform: translateY(0) !important; 
+  }
+
+  /* ═══════════ PROJECT HERO ═══════════ */
+  .project-hero {
+    padding: 120px 2rem 3rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .project-breadcrumb {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1.5rem;
+  }
+  .project-breadcrumb a {
+    color: var(--green-main); text-decoration: none; font-weight: 600;
+    transition: color 0.3s;
+  }
+  .project-breadcrumb a:hover { color: var(--green-dark); }
+  .project-breadcrumb svg { width: 14px; height: 14px; }
+
+  .project-hero-grid {
+    display: grid; grid-template-columns: 1fr 340px; gap: 3rem; align-items: start;
+  }
+
+  .project-meta-tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 5px 14px; border-radius: 20px;
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+  .project-meta-tag.c1 { background: rgba(122, 158, 126, 0.15); color: var(--green-dark); }
+  .project-meta-tag.c2 { background: rgba(201, 168, 106, 0.2); color: var(--gold-dark); }
+  .project-meta-tag.c3 { background: rgba(232, 180, 184, 0.22); color: var(--pink-accent); }
+  .project-meta-tag .sep { opacity: 0.5; font-weight: 400; }
+  .project-hero-title {
+    font-family: var(--font-display); font-size: clamp(2.2rem, 4vw, 3rem);
+    font-weight: 700; color: var(--green-dark); line-height: 1.15; margin-bottom: 0.75rem;
+  }
+  .project-hero-subtitle {
+    font-family: var(--font-display); font-size: 1.15rem; font-weight: 500;
+    font-style: italic; color: var(--green-main); margin-bottom: 1.5rem;
+  }
+  .project-hero-desc {
+    font-size: 0.95rem; color: var(--text-light); line-height: 1.75; margin-bottom: 1.5rem;
+  }
+
+  /* Info sidebar card */
+  .project-info-card {
+    background: var(--white-warm); border-radius: 20px; padding: 2rem;
+    border: 1px solid rgba(122, 158, 126, 0.1);
+    box-shadow: 0 4px 20px rgba(79, 111, 82, 0.06);
+    position: sticky; top: 90px;
+  }
+  .project-info-card h4 {
+    font-family: var(--font-display); font-size: 1.1rem; font-weight: 600;
+    color: var(--green-dark); margin-bottom: 1.2rem;
+    padding-bottom: 0.75rem; border-bottom: 1px solid rgba(122, 158, 126, 0.1);
+  }
+  .info-row {
+    display: flex; align-items: flex-start; gap: 12px; margin-bottom: 1rem;
+  }
+  .info-row:last-child { margin-bottom: 0; }
+  .info-row svg {
+    width: 18px; height: 18px; color: var(--green-main); flex-shrink: 0; margin-top: 2px;
+  }
+  .info-label {
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em;
+    text-transform: uppercase; color: var(--text-muted); margin-bottom: 2px;
+  }
+  .info-value { font-size: 0.88rem; color: var(--text); font-weight: 500; }
+
+  .tools-list {
+    display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px;
+  }
+  .tool-tag {
+    padding: 3px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 600;
+    display: inline-flex; align-items: center; gap: 5px;
+  }
+  /* Primary tool - solid green */
+  .tool-tag.primary { background: rgba(122, 158, 126, 0.18); color: var(--green-dark); }
+  /* Secondary tool - outlined green */
+  .tool-tag.secondary {
+    background: transparent; color: var(--green-main);
+    border: 1px solid rgba(122, 158, 126, 0.35);
+    padding: 2px 9px;
+  }
+  /* External resource - pink */
+  .tool-tag.external { background: rgba(232, 180, 184, 0.2); color: var(--pink-accent); }
+  /* Legacy support */
+  .tool-tag.green { background: rgba(122, 158, 126, 0.18); color: var(--green-dark); }
+  .tool-tag.pink { background: rgba(232, 180, 184, 0.2); color: var(--pink-accent); }
+
+  /* ═══════════ CONTENT SECTIONS ═══════════ */
+  .project-content {
+    max-width: 860px; margin: 0 auto; padding: 0 2rem 4rem;
+  }
+
+  .content-section {
+    margin-bottom: 3rem;
+  }
+  .content-section-header {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 1.2rem;
+  }
+  .content-section-num {
+    width: 36px; height: 36px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display); font-size: 1rem; font-weight: 700;
+    flex-shrink: 0;
+  }
+  .num-green { background: rgba(122, 158, 126, 0.14); color: var(--green-dark); }
+  .num-pink { background: rgba(232, 180, 184, 0.18); color: var(--pink-accent); }
+  .content-section-title {
+    font-family: var(--font-display); font-size: 1.4rem; font-weight: 600;
+    color: var(--green-dark);
+  }
+
+  .content-section p {
+    font-size: 0.92rem; color: var(--text-light); line-height: 1.75; margin-bottom: 0.75rem;
+  }
+  .content-section p:last-child { margin-bottom: 0; }
+
+  .problematique-box {
+    background: var(--white-warm); border-left: 3px solid var(--pink-accent);
+    border-radius: 0 16px 16px 0; padding: 1.3rem 1.6rem; margin: 1rem 0;
+    font-family: var(--font-display); font-size: 1.05rem; font-style: italic;
+    color: var(--green-dark); line-height: 1.55;
+  }
+
+  /* Steps */
+  .step-block {
+    position: relative; padding-left: 28px; margin-bottom: 1.5rem;
+  }
+  .step-block::before {
+    content: ''; position: absolute; left: 6px; top: 28px; bottom: -12px;
+    width: 2px; background: var(--green-pale); border-radius: 2px;
+  }
+  .step-block:last-child::before { display: none; }
+  .step-dot {
+    position: absolute; left: 0; top: 6px;
+    width: 14px; height: 14px; border-radius: 50%;
+    border: 2.5px solid var(--green-main); background: var(--beige);
+  }
+  .step-block:nth-child(even) .step-dot { border-color: var(--pink-accent); }
+  .step-title {
+    font-family: var(--font-display); font-size: 1.1rem; font-weight: 600;
+    color: var(--green-dark); margin-bottom: 0.4rem;
+  }
+  .step-block p {
+    font-size: 0.88rem; color: var(--text-light); line-height: 1.7;
+  }
+
+  /* Screenshots */
+  .screenshot-grid {
+    display: grid; grid-template-columns: 1fr; gap: 2rem; margin: 1.5rem 0;
+  }
+  .screenshot-item {
+    border-radius: 16px; overflow: hidden;
+    border: 1px solid rgba(122, 158, 126, 0.1);
+    box-shadow: 0 4px 16px rgba(79, 111, 82, 0.06);
+    background: var(--white-warm);
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  .screenshot-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(79, 111, 82, 0.1);
+  }
+  .screenshot-item img {
+    width: 100%; display: block; cursor: pointer;
+  }
+  .screenshot-caption {
+    padding: 0.75rem 1.2rem;
+    font-size: 0.8rem; font-weight: 600; color: var(--text-muted);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .screenshot-caption svg { width: 14px; height: 14px; color: var(--green-main); }
+
+  /* YouTube embed */
+  .video-container {
+    position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;
+    border-radius: 16px; margin: 1.5rem 0;
+    box-shadow: 0 4px 20px rgba(79, 111, 82, 0.1);
+    border: 1px solid rgba(122, 158, 126, 0.1);
+  }
+  .video-container iframe {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    border: none; border-radius: 16px;
+  }
+
+  /* Competences chips */
+  .competence-grid {
+    display: flex; flex-wrap: wrap; gap: 8px; margin: 1rem 0;
+  }
+  .competence-chip {
+    padding: 6px 14px; border-radius: 20px;
+    font-size: 0.78rem; font-weight: 600;
+    background: rgba(122, 158, 126, 0.1); color: var(--green-dark);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .competence-chip svg { width: 12px; height: 12px; }
+  .competence-chip.highlight {
+    background: rgba(232, 180, 184, 0.18); color: var(--pink-accent);
+  }
+
+  /* Difficulty cards */
+  .difficulty-card {
+    background: var(--white-warm); border-radius: 16px; padding: 1.3rem 1.5rem;
+    margin-bottom: 1rem; border: 1px solid rgba(122, 158, 126, 0.08);
+  }
+  .difficulty-card h4 {
+    font-family: var(--font-display); font-size: 1.05rem; font-weight: 600;
+    color: var(--green-dark); margin-bottom: 0.4rem;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .difficulty-card h4 svg { width: 16px; height: 16px; color: var(--pink-accent); }
+  .difficulty-card p {
+    font-size: 0.85rem; color: var(--text-light); line-height: 1.65;
+  }
+
+  /* Learnings */
+  .learning-block {
+    background: linear-gradient(135deg, rgba(122, 158, 126, 0.06), rgba(232, 180, 184, 0.06));
+    border-radius: 20px; padding: 2rem; margin: 1.5rem 0;
+    border: 1px solid rgba(122, 158, 126, 0.1);
+  }
+  .learning-block h4 {
+    font-family: var(--font-display); font-size: 1.1rem; font-weight: 600;
+    color: var(--green-dark); margin-bottom: 0.75rem;
+  }
+  .learning-block p {
+    font-size: 0.88rem; color: var(--text-light); line-height: 1.7; margin-bottom: 0.6rem;
+  }
+  .learning-block p:last-child { margin-bottom: 0; }
+
+  /* Back to projects button */
+  .back-projects {
+    display: flex; justify-content: center; padding: 2rem 0 4rem;
+  }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 12px 28px; border-radius: 50px;
+    font-family: var(--font-body); font-size: 0.88rem; font-weight: 600;
+    text-decoration: none; cursor: pointer; border: none; transition: all 0.35s;
+  }
+  .btn svg { width: 16px; height: 16px; }
+  .btn-primary { background: var(--green-dark); color: var(--white-warm); }
+  .btn-primary:hover {
+    background: var(--green-main); transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(79, 111, 82, 0.2);
+  }
+  .btn-secondary {
+    background: transparent; color: var(--green-dark); border: 1.5px solid var(--green-main);
+  }
+  .btn-secondary:hover {
+    background: var(--green-dark); color: var(--white-warm); border-color: var(--green-dark);
+  }
+
+  /* Footer */
+  footer {
+    background: var(--green-dark); color: rgba(255,255,255,0.6);
+    text-align: center; padding: 2rem; font-size: 0.82rem;
+  }
+  footer a { color: var(--pink-soft); text-decoration: none; }
+
+  /* Lightbox */
+  .lightbox {
+    display: none; position: fixed; inset: 0; z-index: 200;
+    background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+    align-items: center; justify-content: center; cursor: pointer;
+  }
+  .lightbox.active { display: flex; }
+  .lightbox img {
+    max-width: 92vw; max-height: 90vh; border-radius: 12px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.3);
+  }
+  .lightbox-close {
+    position: absolute; top: 20px; right: 24px;
+    color: white; font-size: 2rem; cursor: pointer; opacity: 0.7;
+    transition: opacity 0.3s;
+  }
+  .lightbox-close:hover { opacity: 1; }
+
+  /* Wave divider */
+  .wave-divider { width: 100%; height: 60px; margin: -1px 0; }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .project-hero-grid { grid-template-columns: 1fr; }
+    .project-info-card { position: static; }
+    .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="navbar">
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-logo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10"/><path d="M12 2c2 3 3 6.5 3 10s-1 7-3 10"/>
+        <path d="M12 2c-2 3-3 6.5-3 10s1 7 3 10"/><path d="M2 12h10"/><path d="M17 8l-1 8"/><path d="M20 6l-1 12"/>
+      </svg>
+      Manon de Matha
+    </a>
+    <ul class="nav-links">
+      <li><a href="../index.html#accueil">Accueil</a></li>
+      <li><a href="../index.html#apropos">À propos</a></li>
+      <li><a href="../index.html#projets" class="active">Projets</a></li>
+      <li><a href="../index.html#competences">Compétences</a></li>
+      <li><a href="../index.html#bilan">Bilan</a></li>
+      <li><a href="../index.html#contact">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <span class="lightbox-close">&times;</span>
+  <img id="lightbox-img" src="" alt="">
+</div>
+
+
+<!-- PROJECT HERO -->
+<section class="project-hero">
+  <div class="project-breadcrumb fade-up">
+    <a href="../index.html">Accueil</a>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+    <a href="../index.html#projets" class="active">Projets</a>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+    <span>SAÉ 1.02</span>
+  </div>
+
+  <div class="project-hero-grid">
+    <div class="fade-up">
+      <span class="project-meta-tag c1">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:14px;height:14px;"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+        SA&Eacute; 1.02 <span class="sep">&middot;</span> S1 <span class="sep">&middot;</span> C1 Traiter
+      </span>
+      <h1 class="project-hero-title">Pollution atmosphérique</h1>
+      <p class="project-hero-subtitle">Transformation JSON → CSV de données environnementales en Python</p>
+      <p class="project-hero-desc">
+        Développement d'un script Python pour transformer un fichier JSON de concentrations de polluants dans l'air à Poitiers en un fichier CSV structuré et exploitable. Mes premiers pas en programmation, réalisé seule par choix.
+      </p>
+    </div>
+
+    <div class="project-info-card fade-up" style="transition-delay: 0.15s;">
+      <h4>Informations</h4>
+      <div class="info-row">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        <div>
+          <p class="info-label">Année</p>
+          <p class="info-value">2025 – 2026 (S1)</p>
+        </div>
+      </div>
+      <div class="info-row">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M8 14l2 2 4-4"/></svg>
+        <div><p class="info-label">Date de rendu</p><p class="info-value">Déc. 2025</p></div>
+      </div>
+      <div class="info-row">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <div>
+          <p class="info-label">Cadre</p>
+          <p class="info-value">Travail individuel</p>
+        </div>
+      </div>
+      <div class="info-row">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        <div>
+          <p class="info-label">Livrable</p>
+          <p class="info-value">Script Python commenté</p>
+        </div>
+      </div>
+      <div class="info-row">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+        <div>
+          <p class="info-label">Outils</p>
+          <div class="tools-list">
+            <span class="tool-tag primary">Python</span>
+            <span class="tool-tag primary">JSON / CSV</span>
+            <span class="tool-tag secondary">Spyder</span>
+          </div>
+        </div>
+      </div>
+      <div class="info-row">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
+        <div>
+          <p class="info-label">SAÉ</p>
+          <p class="info-value">Écriture et lecture de fichiers de données</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WAVE -->
+<svg class="wave-divider" viewBox="0 0 1440 60" preserveAspectRatio="none">
+  <path d="M0,30 C360,55 720,5 1080,35 C1260,50 1380,20 1440,30 L1440,60 L0,60 Z" fill="var(--white-warm)"/>
+</svg>
+
+<!-- PROJECT CONTENT -->
+<div style="background: var(--white-warm);">
+<div class="project-content" style="padding-top: 3rem;">
+
+  <!-- Contexte -->
+  <div class="content-section fade-up">
+    <div class="content-section-header">
+      <div class="content-section-num num-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="width:18px;height:18px;"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div>
+      <h2 class="content-section-title">Contexte & objectifs</h2>
+    </div>
+    <p>L'objectif était de transformer un fichier JSON contenant les concentrations moyennes horaires de polluants dans l'air ambiant à Poitiers en un fichier CSV structuré et exploitable dans Excel. Le jeu de données, issu du réseau fixe des mesures européennes, contenait les relevés de huit polluants réglementés sur 4 719 enregistrements. Le CSV de sortie devait ne conserver que les colonnes utiles et exclure toutes les lignes incomplètes.</p>
+    <p>Travail individuel. Script Python commenté à rendre sur Updago avant le 7 décembre 2025. Évaluation portant sur l'opérationnalité du script, l'optimisation, les bonnes pratiques de programmation et l'ergonomie.</p>
+  </div>
+
+  <!-- Problématique -->
+  <div class="content-section fade-up">
+    <div class="content-section-header">
+      <div class="content-section-num num-pink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="width:18px;height:18px;"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+      <h2 class="content-section-title">Problématique</h2>
+    </div>
+    <div class="problematique-box">
+      Comment lire, transformer et exporter des données environnementales d'un format JSON complexe vers un fichier CSV propre et exploitable, en gérant les lignes incomplètes, l'encodage des accents et le formatage des dates en français ?
+    </div>
+  </div>
+
+  <!-- Réalisation -->
+  <div class="content-section fade-up">
+    <div class="content-section-header">
+      <div class="content-section-num num-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="width:18px;height:18px;"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <h2 class="content-section-title">Réalisation</h2>
+    </div>
+
+    <div class="step-block">
+      <div class="step-dot"></div>
+      <h3 class="step-title">Étape 1 – Exploration de la structure JSON</h3>
+      <p>Utilisation de JSON Formatter pour visualiser la structure arborescente : un tableau de 4 719 enregistrements, chacun contenant un sous-dictionnaire « fields » avec 21 champs. Cette analyse préalable a été déterminante pour naviguer dans la structure imbriquée.</p>
+    </div>
+
+    <div class="step-block">
+      <div class="step-dot"></div>
+      <h3 class="step-title">Étape 2 – Lecture du fichier et gestion des erreurs</h3>
+      <p>Chargement en mémoire via json.load() avec encodage UTF-8. Bloc try/except/finally pour anticiper les erreurs (FileNotFoundError, PermissionError) et garantir la fermeture du fichier dans tous les cas.</p>
+    </div>
+
+    <div class="step-block">
+      <div class="step-dot"></div>
+      <h3 class="step-title">Étape 3 – Extraction et filtrage des données</h3>
+      <p>Parcours des enregistrements pour extraire les 7 champs demandés depuis le sous-dictionnaire « fields ». Gestion des clés absentes via try/except KeyError : les lignes incomplètes sont écartées et comptabilisées.</p>
+    </div>
+
+    <div class="step-block">
+      <div class="step-dot"></div>
+      <h3 class="step-title">Étape 4 – Création du CSV de sortie</h3>
+      <p>Écriture avec séparateur point-virgule et encodage utf-8-sig pour la compatibilité Excel. Ajout d'un message de contrôle en console indiquant le nombre de lignes traitées.</p>
+    </div>
+
+    <div class="step-block">
+      <div class="step-dot"></div>
+      <h3 class="step-title">Étape 5 – Fonctions utilitaires (au-delà du cahier des charges)</h3>
+      <p>Création de getDate() pour convertir les dates du format anglais vers le français, et getUnit() pour transformer les unités scientifiques brutes (« ug.m-3 ») en notation lisible (« μg/m³ »). Initiatives personnelles pour améliorer la qualité du livrable.</p>
+    </div>
+  </div>
+
+  <!-- Résultats & preuves -->
+  <div class="content-section fade-up">
+    <div class="content-section-header">
+      <div class="content-section-num num-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="width:18px;height:18px;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>
+      <h2 class="content-section-title">Résultats & preuves</h2>
+    </div>
+
+    <div class="screenshot-grid">
+      <div class="screenshot-item">
+        <img src="../images/sae102/sae102-json-explorer.png" alt="Exploration JSON" onclick="openLightbox(this)">
+        <div class="screenshot-caption">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          Exploration de la structure JSON via JSON Formatter – 4 719 enregistrements, 21 champs par entrée
+        </div>
+      </div>
+
+      <div class="screenshot-item">
+        <img src="../images/sae102/sae102-code-part1.png" alt="Code Python partie 1" onclick="openLightbox(this)">
+        <div class="screenshot-caption">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          Script Python – importations, fonctions utilitaires getDate() et getUnit(), lecture JSON avec gestion des erreurs
+        </div>
+      </div>
+
+      <div class="screenshot-item">
+        <img src="../images/sae102/sae102-code-part2.png" alt="Code Python partie 2" onclick="openLightbox(this)">
+        <div class="screenshot-caption">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          Script Python – boucle d'extraction, filtrage KeyError, écriture CSV et message de contrôle
+        </div>
+      </div>
+
+      <div class="screenshot-item">
+        <img src="../images/sae102/sae102-resultat-csv.png" alt="Fichier CSV résultat" onclick="openLightbox(this)">
+        <div class="screenshot-caption">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          Fichier CSV généré dans Excel – 7 colonnes, dates en français, unités francisées (μg/m³), lignes incomplètes exclues
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Compétences mobilisées -->
+  <div class="content-section fade-up">
+    <div class="content-section-header">
+      <div class="content-section-num num-pink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="width:18px;height:18px;"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg></div>
+      <h2 class="content-section-title">Compétences mobilisées</h2>
+    </div>
+    <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:0.75rem; font-weight:600;">Apprentissages critiques</p>
+    <div class="competence-grid">
+      <span class="competence-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m9 12 2 2 4-4"/></svg> AC11.01 – Interpréter le besoin du commanditaire</span>
+      <span class="competence-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m9 12 2 2 4-4"/></svg> AC11.02 – Respecter les formalismes de notation</span>
+      <span class="competence-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m9 12 2 2 4-4"/></svg> AC11.03 – Connaître et utiliser la syntaxe des langages</span>
+      <span class="competence-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m9 12 2 2 4-4"/></svg> AC11.04 – Maîtriser la structure des données à exploiter</span>
+      <span class="competence-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m9 12 2 2 4-4"/></svg> AC11.05 – Comprendre les structures algorithmiques de base</span>
+      <span class="competence-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m9 12 2 2 4-4"/></svg> AC11.06 – Prendre conscience de l'intérêt de la programmation</span>
+    </div>
+    <p style="font-size:0.85rem; color:var(--text-muted); margin: 1rem 0 0.75rem; font-weight:600;">Ressources mobilisées</p>
+    <div class="competence-grid">
+      <span class="competence-chip highlight"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m9 12 2 2 4-4"/></svg> R1.03 – Bases de la programmation 1</span>
+      <span class="competence-chip highlight"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m9 12 2 2 4-4"/></svg> R1.10 – Projet Personnel et Professionnel 1</span>
+    </div>
+    <p style="font-size:0.85rem; color:var(--text-muted); margin: 1rem 0 0.75rem; font-weight:600;">Compétences techniques</p>
+    <div class="competence-grid">
+      <span class="competence-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m9 12 2 2 4-4"/></svg> Python (json, csv, datetime)</span>
+      <span class="competence-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m9 12 2 2 4-4"/></svg> Gestion des erreurs (try/except)</span>
+      <span class="competence-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m9 12 2 2 4-4"/></svg> Encodage et compatibilité Excel</span>
+      <span class="competence-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m9 12 2 2 4-4"/></svg> Exploration de structures de données</span>
+    </div>
+  </div>
+
+  <!-- Difficultés -->
+  <div class="content-section fade-up">
+    <div class="content-section-header">
+      <div class="content-section-num num-pink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="width:18px;height:18px;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+      <h2 class="content-section-title">Difficultés rencontrées</h2>
+    </div>
+
+    <div class="difficulty-card">
+      <h4><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg> Partir de zéro en Python</h4>
+      <p>Cette SAÉ a été la plus difficile pour moi. Avant d'intégrer la formation, je n'avais jamais écrit une seule ligne de code Python. Je me suis retrouvée seule face à un écran noir, sans savoir par où commencer. Je ne maîtrisais pas les structures de base : je ne savais même pas comment parcourir un dictionnaire Python, et la perspective de naviguer dans une structure JSON aussi imbriquée me semblait insurmontable au départ.</p>
+    </div>
+
+    <div class="difficulty-card">
+      <h4><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg> Un choix assumé : comprendre par moi-même</h4>
+      <p>J'ai fait le choix délibéré de réaliser ce projet seule, sans binôme, pour me forcer à comprendre par moi-même. Mon mot d'ordre était clair : je voulais être capable d'expliquer chaque ligne de mon code. J'ai sollicité de l'aide auprès de mes camarades, non pas pour qu'ils fassent le travail à ma place, mais pour qu'ils m'expliquent les concepts que je ne comprenais pas. Même si mes choix de codage ne sont pas forcément les plus élégants, chaque ligne est le fruit de ma propre réflexion et je suis en mesure de justifier chaque décision technique.</p>
+    </div>
+
+    <div class="difficulty-card">
+      <h4><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg> Difficultés techniques</h4>
+      <p>Au-delà de l'apprentissage du langage, plusieurs points techniques m'ont posé problème : comprendre la structure imbriquée du JSON (un tableau de dictionnaires contenant eux-mêmes des dictionnaires), gérer l'encodage UTF-8 pour que les accents s'affichent correctement dans Excel, et anticiper tous les cas d'erreur possibles (fichier absent, clé manquante, permission refusée). Chacun de ces obstacles a nécessité des recherches et de nombreux essais avant de trouver la bonne solution.</p>
+    </div>
+  </div>
+
+  <!-- Bilan réflexif -->
+  <div class="content-section fade-up">
+    <div class="content-section-header">
+      <div class="content-section-num num-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="width:18px;height:18px;"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
+      <h2 class="content-section-title">Ce que j'ai appris</h2>
+    </div>
+
+    <div class="learning-block">
+      <h4>Savoir-faire acquis</h4>
+      <p>Cette SAÉ m'a permis de faire mes premiers pas concrets en programmation Python. J'ai appris à développer un script complet d'automatisation de traitement de données : lire un fichier JSON, naviguer dans une structure de données imbriquée, transformer et filtrer les enregistrements, et produire un fichier CSV propre et exploitable pour l'analyse statistique. J'ai également découvert l'importance de la gestion des erreurs (try/except) et de l'encodage des caractères, deux aspects rarement visibles mais essentiels dans le traitement de données réelles.</p>
+    </div>
+
+    <div class="learning-block">
+      <h4>Logique algorithmique et rigueur</h4>
+      <p>Au-delà de la syntaxe Python, j'ai développé une véritable logique algorithmique : décomposer un problème complexe en étapes successives, anticiper les cas limites, structurer un programme avec des fonctions réutilisables. J'ai aussi pris conscience de l'importance des bonnes pratiques de programmation – commenter son code, le rendre lisible et maintenable – qui ne sont pas du temps perdu mais un investissement pour soi-même et pour les autres.</p>
+    </div>
+
+    <div class="learning-block">
+      <h4>Ce que je ferais différemment</h4>
+      <p>Avec le recul, je me rendrais plus rapidement sur les outils de visualisation JSON pour comprendre la structure du fichier avant de coder. Cette étape d'exploration m'aurait fait gagner du temps si je l'avais systématisée dès le début. J'aurais aussi pu découper mon script en davantage de fonctions dès le départ pour le rendre encore plus modulaire. Mais surtout, cette SAÉ m'a montré que partir de zéro n'est pas un obstacle quand on s'engage à comprendre ce que l'on fait – c'est même la meilleure façon d'apprendre.</p>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- Wave before CTA -->
+<svg class="wave-divider" viewBox="0 0 1440 60" preserveAspectRatio="none">
+  <path d="M0,30 C240,55 480,5 720,35 C960,55 1200,10 1440,25 L1440,0 L0,0 Z" fill="var(--white-warm)"/>
+</svg>
+
+<!-- Back -->
+<div class="back-projects">
+  <a href="../index.html#projets" class="btn btn-primary">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    Retour aux projets
+  </a>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <p>&copy; 2026 Manon de Matha · Portfolio BUT Science des Données · Fait avec passion</p>
+</footer>
+
+<script>
+  // Scroll animations
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) entry.target.classList.add('visible');
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+  // Nav scroll
+  const nav = document.getElementById('navbar');
+  window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 20));
+
+  // Lightbox
+  function openLightbox(img) {
+    const lb = document.getElementById('lightbox');
+    document.getElementById('lightbox-img').src = img.src;
+    lb.classList.add('active');
+  }
+  document.getElementById('lightbox').addEventListener('click', function(e) {
+    if (e.target !== document.getElementById('lightbox-img')) {
+      this.classList.remove('active');
+    }
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SA&Eacute; 2.06 &ndash; CapriTrack | Manon de Matha</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green-main: #7A9E7E;
+    --green-dark: #4F6F52;
+    --green-light: #a8c5ab;
+    --green-pale: #d4e4d6;
+    --pink-soft: #E8B4B8;
+    --pink-accent: #D98C95;
+    --gold-soft: #E5C488;
+    --gold-main: #C9A86A;
+    --gold-dark: #A68A4C;
+    --beige: #F5EFE6;
+    --white-warm: #FAF8F5;
+    --text: #2E2E2E;
+    --text-light: #5a5a5a;
+    --text-muted: #8a8a7e;
+    --font-display: 'Cormorant Garamond', Georgia, serif;
+    --font-body: 'Nunito', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--font-body);
+    color: var(--text);
+    background: var(--beige);
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(245, 239, 230, 0.88);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(122, 158, 126, 0.12);
+  }
+  nav.scrolled { box-shadow: 0 2px 24px rgba(79, 111, 82, 0.08); }
+  .nav-inner {
+    max-width: 1200px; margin: 0 auto; padding: 0 2rem;
+    display: flex; align-items: center; justify-content: space-between; height: 64px;
+  }
+  .nav-logo {
+    font-family: var(--font-display); font-size: 1.35rem; font-weight: 600;
+    color: var(--green-dark); text-decoration: none; display: flex; align-items: center; gap: 8px;
+  }
+  .nav-logo svg { width: 22px; height: 22px; }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a {
+    font-size: 0.82rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--text-light); text-decoration: none; position: relative; padding: 4px 0; transition: color 0.3s;
+  }
+  .nav-links a::after {
+    content: ''; position: absolute; bottom: -2px; left: 0;
+    width: 0; height: 2px; background: var(--pink-accent); border-radius: 1px; transition: width 0.3s;
+  }
+  .nav-links a:hover { color: var(--green-dark); }
+  .nav-links a.active { color: var(--green-dark); }
+  .nav-links a:hover::after { width: 100%; }
+  .nav-links a.active::after { width: 100%; }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .fade-up {
+    opacity: 0; transform: translateY(24px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+    animation: fallbackVisible 0s 2s forwards;
+  }
+  @keyframes fallbackVisible {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+  .content-section.fade-up, .screenshot-grid, .screenshot-item, .project-hero, .project-hero-grid {
+    opacity: 1 !important; transform: translateY(0) !important;
+  }
+
+  /* PROJECT HERO */
+  .project-hero {
+    padding: 120px 2rem 3rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .project-breadcrumb {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1.5rem;
+  }
+  .project-breadcrumb a {
+    color: var(--green-main); text-decoration: none; font-weight: 600;
+    transition: color 0.3s;
+  }
+  .project-breadcrumb a:hover { color: var(--green-dark); }
+  .project-breadcrumb svg { width: 14px; height: 14px; }
+
+  .project-hero-grid {
+    display: grid; grid-template-columns: 1fr 340px; gap: 3rem; align-items: start;
+  }
+
+  .project-meta-tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 5px 14px; border-radius: 20px;
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+  .project-meta-tag.c1 { background: rgba(122, 158, 126, 0.15); color: var(--green-dark); }
+  .project-meta-tag.c2 { background: rgba(201, 168, 106, 0.2); color: var(--gold-dark); }
+  .project-meta-tag.c3 { background: rgba(232, 180, 184, 0.22); color: var(--pink-accent); }
+  .project-meta-tag.integ { background: linear-gradient(135deg, rgba(122,158,126,0.20), rgba(201,168,106,0.22) 52%, rgba(217,140,149,0.22)); color: var(--green-dark); }
+  .project-meta-tag .sep { opacity: 0.5; font-weight: 400; }
+  .project-hero-title {
+    font-family: var(--font-display); font-size: clamp(2.2rem, 4vw, 3rem);
+    font-weight: 700; color: var(--green-dark); line-height: 1.15; margin-bottom: 0.75rem;
+  }
+  .project-hero-subtitle {
+    font-family: var(--font-display); font-size: 1.15rem; font-weight: 500;
+    font-style: italic; color: var(--gold-main); margin-bottom: 1.5rem;
+  }
+  .project-hero-desc {
+    font-size: 0.95rem; color: var(--text-light); line-height: 1.75; margin-bottom: 1.5rem;
+  }
+
+  /* Info sidebar card */
+  .project-info-card {
+    background: var(--white-warm); border-radius: 20px; padding: 2rem;
+    border: 1px solid rgba(122, 158, 126, 0.1);
+    box-shadow: 0 4px 20px rgba(79, 111, 82, 0.06);
+    position: sticky; top: 90px;
+  }
+  .project-info-card h4 {
+    font-family: var(--font-display); font-size: 1.1rem; font-weight: 600;
+    color: var(--green-dark); margin-bottom: 1.2rem;
+    padding-bottom: 0.75rem; border-bottom: 1px solid rgba(122, 158, 126, 0.1);
+  }
+  .info-row {
+    display: flex; align-items: flex-start; gap: 12px; margin-bottom: 1rem;
+  }
+  .info-row:last-child { margin-bottom: 0; }
+  .info-row svg {
+    width: 18px; height: 18px; color: var(--green-main); flex-shrink: 0; margin-top: 2px;
+  }
+  .info-label {
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em;
+    text-transform: uppercase; color: var(--text-muted); margin-bottom: 2px;
+  }
+  .info-value { font-size: 0.88rem; color: var(--text); font-weight: 500; }
+
+  .tools-list {
+    display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px;
+  }
+  .tool-tag {
+    padding: 3px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 600;
+    display: inline-flex; align-items: center; gap: 5px;
+  }
+  /* Primary tool - solid green */
+  .tool-tag.primary { background: rgba(122, 158, 126, 0.18); color: var(--green-dark); }
+  /* Secondary tool - outlined green */
+  .tool-tag.secondary {
+    background: transparent; color: var(--green-main);
+    border: 1px solid rgba(122, 158, 126, 0.35);
+    padding: 2px 9px;
+  }
+  /* External resource - pink */
+  .tool-tag.external { background: rgba(232, 180, 184, 0.2); color: var(--pink-accent); }
+  /* Legacy support */
+  .tool-tag.green { background: rgba(122, 158, 126, 0.18); color: var(--green-dark); }
+  .tool-tag.pink { background: rgba(232, 180, 184, 0.2); color: var(--pink-accent); }
+
+  /* CONTENT SECTIONS */
+  .project-content {
+    max-width: 860px; margin: 0 auto; padding: 0 2rem 4rem;
+  }
+
+  .content-section {
+    margin-bottom: 3rem;
+  }
+  .content-section-header {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 1.2rem;
+  }
+  .content-section-num {
+    width: 36px; height: 36px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display); font-size: 1rem; font-weight: 700;
+    flex-shrink: 0;
+  }
+  .num-green { background: rgba(122, 158, 126, 0.14); color: var(--green-dark); }
+  .num-pink { background: rgba(232, 180, 184, 0.18); color: var(--pink-accent); }
+  .content-section-title {
+    font-family: var(--font-display); font-size: 1.4rem; font-weight: 600;
+    color: var(--green-dark);
+  }
+
+  .content-section p {
+    font-size: 0.92rem; color: var(--text-light); line-height: 1.75; margin-bottom: 0.75rem;
+  }
+  .content-section p:last-child { margin-bottom: 0; }
+
+  .problematique-box {
+    background: var(--white-warm); border-left: 3px solid var(--pink-accent);
+    border-radius: 0 16px 16px 0; padding: 1.3rem 1.6rem; margin: 1rem 0;
+    font-family: var(--font-display); font-size: 1.05rem; font-style: italic;
+    color: var(--green-dark); line-height: 1.55;
+  }
+
+  /* Steps */
+  .step-block {
+    position: relative; padding-left: 28px; margin-bottom: 1.5rem;
+  }
+  .step-block::before {
+    content: ''; position: absolute; left: 6px; top: 28px; bottom: -12px;
+    width: 2px; background: var(--green-pale); border-radius: 2px;
+  }
+  .step-block:last-child::before { display: none; }
+  .step-dot {
+    position: absolute; left: 0; top: 6px;
+    width: 14px; height: 14px; border-radius: 50%;
+    border: 2.5px solid var(--green-main); background: var(--beige);
+  }
+  .step-block:nth-child(even) .step-dot { border-color: var(--pink-accent); }
+  .step-title {
+    font-family: var(--font-display); font-size: 1.1rem; font-weight: 600;
+    color: var(--green-dark); margin-bottom: 0.4rem;
+  }
+  .step-block p {
+    font-size: 0.88rem; color: var(--text-light); line-height: 1.7;
+  }
+
+  /* Screenshots */
+  .screenshot-grid {
+    display: grid; grid-template-columns: 1fr; gap: 2rem; margin: 1.5rem 0;
+  }
+  .screenshot-item {
+    border-radius: 16px; overflow: hidden;
+    border: 1px solid rgba(122, 158, 126, 0.1);
+    box-shadow: 0 4px 16px rgba(79, 111, 82, 0.06);
+    background: var(--white-warm);
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  .screenshot-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(79, 111, 82, 0.1);
+  }
+  .screenshot-item img {
+    width: 100%; display: block; cursor: pointer;
+    min-height: 80px;
+    background: var(--beige);
+  }
+  .screenshot-caption {
+    padding: 0.75rem 1.2rem;
+    font-size: 0.8rem; font-weight: 600; color: var(--text-muted);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .screenshot-caption svg { width: 14px; height: 14px; color: var(--green-main); }
+
+  /* Carousel */
+  .carousel-container {
+    position: relative; border-radius: 16px; overflow: hidden;
+    border: 1px solid rgba(122, 158, 126, 0.1);
+    box-shadow: 0 4px 16px rgba(79, 111, 82, 0.06);
+    background: var(--white-warm);
+    margin: 1.5rem 0;
+  }
+  .carousel-track {
+    display: flex; transition: transform 0.4s ease;
+  }
+  .carousel-slide {
+    min-width: 100%; position: relative;
+  }
+  .carousel-slide img {
+    width: 100%; display: block; cursor: pointer;
+    min-height: 120px; background: var(--beige);
+  }
+  .carousel-caption {
+    padding: 0.75rem 1.2rem;
+    font-size: 0.8rem; font-weight: 600; color: var(--text-muted);
+    display: flex; align-items: center; gap: 8px;
+    background: var(--white-warm);
+  }
+  .carousel-caption svg { width: 14px; height: 14px; color: var(--green-main); }
+  .carousel-btn {
+    position: absolute; top: 50%; transform: translateY(-70%);
+    width: 40px; height: 40px; border-radius: 50%;
+    background: rgba(255,255,255,0.9); border: 1px solid rgba(122, 158, 126, 0.15);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; z-index: 10;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: background 0.3s, transform 0.3s;
+  }
+  .carousel-btn:hover {
+    background: var(--white-warm);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  }
+  .carousel-btn svg { width: 18px; height: 18px; color: var(--green-dark); }
+  .carousel-btn.prev { left: 12px; }
+  .carousel-btn.next { right: 12px; }
+  .carousel-dots {
+    display: flex; justify-content: center; gap: 6px;
+    padding: 0.6rem 0; background: var(--white-warm);
+  }
+  .carousel-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--green-pale); border: none; cursor: pointer;
+    transition: background 0.3s, transform 0.3s;
+  }
+  .carousel-dot.active {
+    background: var(--green-main); transform: scale(1.25);
+  }
+
+  /* YouTube thumbnail */
+  .video-thumb {
+    position: relative; display: block; border-radius: 16px; overflow: hidden;
+    margin: 1.5rem 0;
+    box-shadow: 0 4px 20px rgba(79, 111, 82, 0.1);
+    border: 1px solid rgba(122, 158, 126, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  .video-thumb:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 32px rgba(79, 111, 82, 0.15);
+  }
+  .video-thumb img { width: 100%; display: block; }
+  .video-play-btn {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 68px; height: 48px;
+    background: #FF0000; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0.9; transition: opacity 0.3s, transform 0.3s;
+  }
+  .video-thumb:hover .video-play-btn {
+    opacity: 1; transform: translate(-50%, -50%) scale(1.1);
+  }
+  .video-play-btn svg { width: 24px; height: 24px; fill: white; }
+
+  /* Competences chips */
+  .competence-grid {
+    display: flex; flex-wrap: wrap; gap: 8px; margin: 1rem 0;
+  }
+  .competence-chip {
+    padding: 6px 14px; border-radius: 20px;
+    font-size: 0.78rem; font-weight: 600;
+    background: rgba(122, 158, 126, 0.1); color: var(--green-dark);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .competence-chip svg { width: 12px; height: 12px; }
+  .competence-chip.highlight {
+    background: rgba(232, 180, 184, 0.18); color: var(--pink-accent);
+  }
+
+  /* Difficulty cards */
+  .difficulty-card {
+    background: var(--white-warm); border-radius: 16px; padding: 1.3rem 1.5rem;
+    margin-bottom: 1rem; border: 1px solid rgba(122, 158, 126, 0.08);
+  }
+  .difficulty-card h4 {
+    font-family: var(--font-display); font-size: 1.05rem; font-weight: 600;
+    color: var(--green-dark); margin-bottom: 0.4rem;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .difficulty-card h4 svg { width: 16px; height: 16px; color: var(--pink-accent); }
+  .difficulty-card p {
+    font-size: 0.85rem; color: var(--text-light); line-height: 1.65;
+  }
+
+  /* Learnings */
+  .learning-block {
+    background: linear-gradient(135deg, rgba(122, 158, 126, 0.06), rgba(232, 180, 184, 0.06));
+    border-radius: 20px; padding: 2rem; margin: 1.5rem 0;
+    border: 1px solid rgba(122, 158, 126, 0.1);
+  }
+  .learning-block h4 {
+    font-family: var(--font-display); font-size: 1.1rem; font-weight: 600;
+    color: var(--green-dark); margin-bottom: 0.75rem;
+  }
+  .learning-block p {
+    font-size: 0.88rem; color: var(--text-light); line-height: 1.7; margin-bottom: 0.6rem;
+  }
+  .learning-block p:last-child { margin-bottom: 0; }
+
+  /* Back to projects button */
+  .back-projects {
+    display: flex; justify-content: center; padding: 2rem 0 4rem;
+  }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 12px 28px; border-radius: 50px;
+    font-family: var(--font-body); font-size: 0.88rem; font-weight: 600;
+    text-decoration: none; cursor: pointer; border: none; transition: all 0.35s;
+  }
+  .btn svg { width: 16px; height: 16px; }
+  .btn-primary { background: var(--green-dark); color: var(--white-warm); }
+  .btn-primary:hover {
+    background: var(--green-main); transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(79, 111, 82, 0.2);
+  }
+
+  /* Footer */
+  footer {
+    background: var(--green-dark); color: rgba(255,255,255,0.6);
+    text-align: center; padding: 2rem; font-size: 0.82rem;
+  }
+  footer a { color: var(--pink-soft); text-decoration: none; }
+
+  /* Lightbox */
+  .lightbox {
+    display: none; position: fixed; inset: 0; z-index: 200;
+    background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+    align-items: center; justify-content: center; cursor: pointer;
+  }
+  .lightbox.active { display: flex; }
+  .lightbox img {
+    max-width: 92vw; max-height: 90vh; border-radius: 12px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.3);
+  }
+  .lightbox-close {
+    position: absolute; top: 20px; right: 24px;
+    color: white; font-size: 2rem; cursor: pointer; opacity: 0.7;
+    transition: opacity 0.3s;
+  }
+  .lightbox-close:hover { opacity: 1; }
+
+  /* Wave divider */
+  .wave-divider { width: 100%; height: 60px; margin: -1px 0; }
+
+  /* Section subtitle */
+  .section-subtitle {
+    font-family: var(--font-display); font-size: 1.05rem; font-weight: 600;
+    color: var(--pink-accent); margin: 2rem 0 0.5rem;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .section-subtitle svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .project-hero-grid { grid-template-columns: 1fr; }
+    .project-info-card { position: static; }
+    .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+<nav id="navbar"><div class="nav-inner"><a href="../index.html" class="nav-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10"/><path d="M12 2c2 3 3 6.5 3 10s-1 7-3 10"/><path d="M12 2c-2 3-3 6.5-3 10s1 7 3 10"/><path d="M2 12h10"/><path d="M17 8l-1 8"/><path d="M20 6l-1 12"/></svg>Manon de Matha</a><ul class="nav-links"><li><a href="../index.html#accueil">Accueil</a></li><li><a href="../index.html#apropos">&Agrave; propos</a></li><li><a href="../index.html#projets" class="active">Projets</a></li><li><a href="../index.html#competences">Comp&eacute;tences</a></li><li><a href="../index.html#bilan">Bilan</a></li><li><a href="../index.html#contact">Contact</a></li></ul></div></nav>
+<div class="lightbox" id="lightbox"><span class="lightbox-close">&times;</span><img id="lightbox-img" src="" alt=""></div>
+
+<section class="project-hero">
+  <div class="project-breadcrumb fade-up"><a href="../index.html">Accueil</a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg><a href="../index.html#projets" class="active">Projets</a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg><span>SA&Eacute; 2.06</span></div>
+  <div class="project-hero-grid">
+    <div class="fade-up">
+      <span class="project-meta-tag integ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:14px;height:14px;"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg> SA&Eacute; 2.06 <span class="sep">&middot;</span> S2 <span class="sep">&middot;</span> Projet int&eacute;grateur (C1 &middot; C2 &middot; C3)</span>
+      <h1 class="project-hero-title">CapriTrack</h1>
+      <p class="project-hero-subtitle" style="background: linear-gradient(90deg, var(--green-dark), var(--gold-dark) 50%, var(--pink-accent)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: var(--pink-accent);">Suivi des analyses PCR de mycoplasmes caprins &middot; Laboratoire Qualyse</p>
+      <p class="project-hero-desc">SA&Eacute; int&eacute;grative du semestre, mobilisant simultan&eacute;ment les trois comp&eacute;tences du BUT&nbsp;: traiter, analyser et valoriser. CapriTrack est un outil dynamique con&ccedil;u pour le Laboratoire Qualyse (analyses PCR sur cheptels caprins des Deux-S&egrave;vres et de la Vienne, 2018&ndash;2026), capable de transformer des fichiers de r&eacute;sultats bruts en un tableau de bord complet&nbsp;: import, pipeline ETL, base SQLite, scoring sanitaire, datavisualisation et restitution. R&eacute;alis&eacute; en &eacute;quipe de quatre, o&ugrave; j&rsquo;ai &eacute;t&eacute; Scrum Master et porteuse de la compr&eacute;hension du besoin, de l&rsquo;ergonomie et de l&rsquo;identit&eacute; visuelle.</p>
+    </div>
+    <div class="project-info-card fade-up" style="transition-delay: 0.15s;">
+      <h4>Informations</h4>
+      <div class="info-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><div><p class="info-label">Ann&eacute;e</p><p class="info-value">2025 &ndash; 2026 (S2)</p></div></div>
+      <div class="info-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M8 14l2 2 4-4"/></svg><div><p class="info-label">Date de rendu</p><p class="info-value">Juin 2026</p></div></div>
+      <div class="info-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><div><p class="info-label">Cadre</p><p class="info-value">&Eacute;quipe de 4 &middot; Scrum Master</p></div></div>
+      <div class="info-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><div><p class="info-label">Livrables</p><p class="info-value">Application Streamlit, base SQLite, rapport, vid&eacute;o, oral (EN)</p></div></div>
+      <div class="info-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg><div><p class="info-label">Outils</p><div class="tools-list"><span class="tool-tag primary">Python</span><span class="tool-tag primary">Streamlit</span><span class="tool-tag primary">SQLite</span><span class="tool-tag secondary">Plotly</span><span class="tool-tag secondary">Pandas</span><span class="tool-tag secondary">Looping</span><span class="tool-tag secondary">Trello</span><span class="tool-tag external">YouTube</span></div></div></div>
+      <div class="info-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg><div><p class="info-label">SA&Eacute;</p><p class="info-value">Analyse de donn&eacute;es, reporting et datavisualisation</p></div></div>
+    </div>
+  </div>
+</section>
+<svg class="wave-divider" viewBox="0 0 1440 60" preserveAspectRatio="none"><path d="M0,30 C360,55 720,5 1080,35 C1260,50 1380,20 1440,30 L1440,60 L0,60 Z" fill="var(--white-warm)"/></svg>
+<div style="background: var(--white-warm);"><div class="project-content" style="padding-top: 3rem;">
+
+  <div class="content-section fade-up"><div class="content-section-header"><div class="content-section-num num-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="width:18px;height:18px;"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div><h2 class="content-section-title">Contexte &amp; objectifs</h2></div>
+    <p>CapriTrack est n&eacute; d&rsquo;une commande du Laboratoire Qualyse, laboratoire public d&rsquo;analyses sanitaires implant&eacute; pr&egrave;s de Niort, qui r&eacute;alise depuis 2018 des analyses PCR de recherche de mycoplasmes sur des cheptels caprins des Deux-S&egrave;vres (79) et de la Vienne (86). Le commanditaire, M.&nbsp;Treilles, nous a confi&eacute; la conception d&rsquo;un outil dynamique capable de transformer ses fichiers de r&eacute;sultats bruts en un v&eacute;ritable tableau de bord de suivi, d&rsquo;analyse et de restitution, ouvert &agrave; l&rsquo;int&eacute;gration de nouvelles sessions de d&eacute;pistage.</p>
+    <p>L&rsquo;outil porte sur quatre cibles PCR&nbsp;: les trois sous-familles de Myco&iuml;des (capri, capricolum, putrefaciens) et Agalactiae. Chaque r&eacute;sultat est port&eacute; par une valeur Ct dont l&rsquo;interpr&eacute;tation est automatis&eacute;e. Le projet a &eacute;t&eacute; men&eacute; en &eacute;quipe de quatre, aux c&ocirc;t&eacute;s de Louis, Math&eacute;o et Arthur, selon une m&eacute;thode SCRUM impos&eacute;e o&ugrave; j&rsquo;ai tenu le r&ocirc;le de Scrum Master. En tant que SA&Eacute; int&eacute;grative, elle mobilise les trois comp&eacute;tences de la formation et m&rsquo;a confront&eacute;e &agrave; toutes les &eacute;tapes d&rsquo;un projet en science des donn&eacute;es, jusqu&rsquo;aux enjeux de confidentialit&eacute;.</p>
+  </div>
+
+  <div class="content-section fade-up"><div class="content-section-header"><div class="content-section-num num-pink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="width:18px;height:18px;"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div><h2 class="content-section-title">Probl&eacute;matique</h2></div>
+    <div class="problematique-box">Comment concevoir, &agrave; partir de fichiers de r&eacute;sultats PCR h&eacute;t&eacute;rog&egrave;nes et volumineux, un outil autonome et fiable qui structure, analyse et restitue l&rsquo;information sanitaire de mani&egrave;re intelligible pour des utilisateurs non-statisticiens, afin d&rsquo;aider le Laboratoire Qualyse &agrave; suivre l&rsquo;&eacute;tat de sant&eacute; des cheptels et &agrave; &eacute;clairer ses d&eacute;cisions&nbsp;?</div>
+  </div>
+
+  <div class="content-section fade-up"><div class="content-section-header"><div class="content-section-num num-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="width:18px;height:18px;"><polyline points="20 6 9 17 4 12"/></svg></div><h2 class="content-section-title">R&eacute;alisation</h2></div>
+    <div class="step-block"><div class="step-dot"></div><h3 class="step-title">&Eacute;tape 1 &ndash; Cadrage du besoin et organisation SCRUM</h3><p>En tant que Scrum Master, j&rsquo;ai organis&eacute; le d&eacute;coupage du projet en sprints et le suivi quotidien de l&rsquo;&eacute;quipe. Les fonctionnalit&eacute;s ont &eacute;t&eacute; formalis&eacute;es en user stories, prioris&eacute;es par la m&eacute;thode MoSCoW et suivies dans un tableau Kanban sous Trello, du Product Backlog jusqu&rsquo;au Done. J&rsquo;ai aussi r&eacute;alis&eacute; un brainstorming pour cartographier l&rsquo;ensemble du besoin (donn&eacute;es d&rsquo;entr&eacute;e, pipeline, r&egrave;gles de scoring, livrables) afin de garder le cap sur ce qui serait r&eacute;ellement utile au laboratoire.</p></div>
+    <div class="screenshot-grid"><div class="screenshot-item"><img src="../images/sae206/sae206-brainstorming.png" alt="Brainstorming de cadrage &ndash; cartographie du besoin, du pipeline et des livrables" onclick="openLightbox(this)"><div class="screenshot-caption"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Brainstorming de cadrage &ndash; cartographie du besoin, du pipeline et des livrables</div></div></div>
+    <div class="carousel-container" id="carousel-trello"><div class="carousel-track">
+      <div class="carousel-slide"><img src="../images/sae206/sae206-trello-1.png" alt="carousel-trello" onclick="openLightbox(this)"><div class="carousel-caption"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Tableau Kanban Trello &ndash; Cadre Scrum &amp; Daily Scrum</div></div>
+      <div class="carousel-slide"><img src="../images/sae206/sae206-trello-2.png" alt="carousel-trello" onclick="openLightbox(this)"><div class="carousel-caption"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Tableau Kanban Trello &ndash; flux des user stories (In Progress, Review, Test, Done)</div></div>
+    </div>
+    <button class="carousel-btn prev" onclick="moveCarousel('carousel-trello', -1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+    <button class="carousel-btn next" onclick="moveCarousel('carousel-trello', 1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 6 15 12 9 18"/></svg></button>
+    <div class="carousel-dots" id="carousel-trello-dots"></div></div>
+    <div class="step-block"><div class="step-dot"></div><h3 class="step-title">&Eacute;tape 2 &ndash; Pipeline ETL et base de donn&eacute;es</h3><p>L&rsquo;une des difficult&eacute;s techniques tenait &agrave; l&rsquo;h&eacute;t&eacute;rog&eacute;n&eacute;it&eacute; des fichiers sources&nbsp;: le 79 fournit des r&eacute;sultats sous forme de m&eacute;langes &laquo;&nbsp;x4&nbsp;&raquo; (un pool de quatre &eacute;chantillons, repris individuellement en cas de positivit&eacute;), tandis que le 86 transmet des tests individuels directs. J&rsquo;ai particip&eacute; &agrave; la mise en place du parsing et du nettoyage des donn&eacute;es (valeurs manquantes, doublons, formats de dates) avant chargement dans la base SQLite. En amont, un mod&egrave;le conceptuel de donn&eacute;es (Looping) a structur&eacute; la base au plus pr&egrave;s du besoin du v&eacute;t&eacute;rinaire.</p></div>
+    <div class="screenshot-grid"><div class="screenshot-item"><img src="../images/sae206/sae206-mcd.png" alt="Mod&egrave;le conceptuel de donn&eacute;es (MCD, Looping) &ndash; cheptels, sessions, analyses, scores" onclick="openLightbox(this)"><div class="screenshot-caption"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Mod&egrave;le conceptuel de donn&eacute;es (MCD, Looping) &ndash; cheptels, sessions, analyses, scores</div></div></div>
+    <div class="step-block"><div class="step-dot"></div><h3 class="step-title">&Eacute;tape 3 &ndash; Interpr&eacute;tation des Ct et classification sanitaire</h3><p>&Agrave; partir des valeurs Ct, l&rsquo;outil interpr&egrave;te automatiquement chaque r&eacute;sultat selon des seuils m&eacute;tier, puis calcule un score sanitaire longitudinal en huit classes (de A &agrave; I) &agrave; partir des six derniers r&eacute;sultats valides d&rsquo;un cheptel, dans la limite des trois derni&egrave;res ann&eacute;es. Un cheptel ne disposant pas d&rsquo;assez de tests n&rsquo;est pas classifi&eacute;.</p></div>
+    <div class="competence-grid"><span class="competence-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m9 12 2 2 4-4"/></svg> Ct = 40 &rarr; N&eacute;gatif</span><span class="competence-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m9 12 2 2 4-4"/></svg> Ct &lt; 40 &rarr; Positif</span><span class="competence-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m9 12 2 2 4-4"/></svg> Ct &lt; 25 &rarr; Fortement positif</span></div>
+    <div class="step-block"><div class="step-dot"></div><h3 class="step-title">&Eacute;tape 4 &ndash; Tableau de bord et restitution</h3><p>D&eacute;velopp&eacute; sous Streamlit et Plotly, le tableau de bord est pens&eacute; pour des utilisateurs non-statisticiens&nbsp;: les indicateurs les plus complexes ont &eacute;t&eacute; &eacute;cart&eacute;s au profit de repr&eacute;sentations simples. Je me suis particuli&egrave;rement investie dans l&rsquo;ergonomie et l&rsquo;identit&eacute; visuelle, en reprenant les codes graphiques du site de Qualyse pour que l&rsquo;outil prolonge l&rsquo;univers du laboratoire. L&rsquo;application s&rsquo;organise en quatre sous-onglets (tableau pivot, positivit&eacute; &amp; n&eacute;gativit&eacute;, classification sanitaire, cartographie), compl&eacute;t&eacute;s par des filtres, des tris, des exports et une sauvegarde de la base. Une vid&eacute;o accompagne le livrable, et la restitution finale s&rsquo;est faite &agrave; l&rsquo;oral en anglais.</p></div>
+  </div>
+
+  <div class="content-section fade-up"><div class="content-section-header"><div class="content-section-num num-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="width:18px;height:18px;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div><h2 class="content-section-title">R&eacute;sultats &amp; preuves</h2></div>
+    <p>Vue d&rsquo;ensemble de l&rsquo;application livr&eacute;e&nbsp;: prise en main, tableau pivot, indicateurs de positivit&eacute;, classification sanitaire, cartographie et sauvegarde de la base.</p>
+    <div class="section-subtitle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Le logiciel CapriTrack</div>
+    <div class="carousel-container" id="carousel-app"><div class="carousel-track">
+      <div class="carousel-slide"><img src="../images/sae206/sae206-accueil.png" alt="carousel-app" onclick="openLightbox(this)"><div class="carousel-caption"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Page d&rsquo;accueil</div></div>
+      <div class="carousel-slide"><img src="../images/sae206/sae206-etat-base.png" alt="carousel-app" onclick="openLightbox(this)"><div class="carousel-caption"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> &Eacute;tat de la base &ndash; 471 cheptels, 13&nbsp;816 analyses, 10 sessions</div></div>
+      <div class="carousel-slide"><img src="../images/sae206/sae206-import.png" alt="carousel-app" onclick="openLightbox(this)"><div class="carousel-caption"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Import d&rsquo;un fichier Excel de r&eacute;sultats PCR</div></div>
+      <div class="carousel-slide"><img src="../images/sae206/sae206-pivot.png" alt="carousel-app" onclick="openLightbox(this)"><div class="carousel-caption"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Tableau pivot par cible</div></div>
+      <div class="carousel-slide"><img src="../images/sae206/sae206-pivot-export.png" alt="carousel-app" onclick="openLightbox(this)"><div class="carousel-caption"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Code couleur des Ct et export Excel / PDF</div></div>
+      <div class="carousel-slide"><img src="../images/sae206/sae206-posneg-negatifs.png" alt="carousel-app" onclick="openLightbox(this)"><div class="carousel-caption"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> &Eacute;volution du nombre de cheptels n&eacute;gatifs</div></div>
+      <div class="carousel-slide"><img src="../images/sae206/sae206-posneg-taux.png" alt="carousel-app" onclick="openLightbox(this)"><div class="carousel-caption"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> &Eacute;volution du taux de positivit&eacute; par ann&eacute;e</div></div>
+      <div class="carousel-slide"><img src="../images/sae206/sae206-posneg-donut.png" alt="carousel-app" onclick="openLightbox(this)"><div class="carousel-caption"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Proportion de positifs / n&eacute;gatifs pour une session</div></div>
+      <div class="carousel-slide"><img src="../images/sae206/sae206-posneg-serie.png" alt="carousel-app" onclick="openLightbox(this)"><div class="carousel-caption"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Effet de la s&eacute;rie (1, 2, 3) sur le taux de positivit&eacute;</div></div>
+      <div class="carousel-slide"><img src="../images/sae206/sae206-posneg-geo.png" alt="carousel-app" onclick="openLightbox(this)"><div class="carousel-caption"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Comparaison g&eacute;ographique &ndash; Deux-S&egrave;vres (79) vs Vienne (86)</div></div>
+      <div class="carousel-slide"><img src="../images/sae206/sae206-classif-classement.png" alt="carousel-app" onclick="openLightbox(this)"><div class="carousel-caption"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Classement des cheptels par classe sanitaire (A &agrave; I)</div></div>
+      <div class="carousel-slide"><img src="../images/sae206/sae206-classif-repartition.png" alt="carousel-app" onclick="openLightbox(this)"><div class="carousel-caption"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> R&eacute;partition des cheptels par classe</div></div>
+      <div class="carousel-slide"><img src="../images/sae206/sae206-classif-evolution.png" alt="carousel-app" onclick="openLightbox(this)"><div class="carousel-caption"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> &Eacute;volution de la r&eacute;partition des classes (100&nbsp;%)</div></div>
+      <div class="carousel-slide"><img src="../images/sae206/sae206-classif-changements.png" alt="carousel-app" onclick="openLightbox(this)"><div class="carousel-caption"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Cheptels ayant chang&eacute; de classe entre deux sessions</div></div>
+      <div class="carousel-slide"><img src="../images/sae206/sae206-carto-classes.png" alt="carousel-app" onclick="openLightbox(this)"><div class="carousel-caption"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Cartographie par classe sanitaire (animation par session)</div></div>
+      <div class="carousel-slide"><img src="../images/sae206/sae206-carto-cible.png" alt="carousel-app" onclick="openLightbox(this)"><div class="carousel-caption"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Cartographie de la cible la plus positive par cheptel</div></div>
+      <div class="carousel-slide"><img src="../images/sae206/sae206-sauvegardes.png" alt="carousel-app" onclick="openLightbox(this)"><div class="carousel-caption"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Sauvegarde et restauration de la base</div></div>
+    </div>
+    <button class="carousel-btn prev" onclick="moveCarousel('carousel-app', -1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+    <button class="carousel-btn next" onclick="moveCarousel('carousel-app', 1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 6 15 12 9 18"/></svg></button>
+    <div class="carousel-dots" id="carousel-app-dots"></div></div>
+
+    <div class="section-subtitle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg> Vid&eacute;o de d&eacute;monstration</div>
+    <div style="text-align:center; margin:1rem 0 1.5rem;">
+  <a href="https://youtu.be/Jm4qm8LqFXo" target="_blank" rel="noopener" style="display:inline-block; position:relative; max-width:560px; width:100%; border-radius:14px; overflow:hidden; box-shadow:0 8px 24px rgba(0,0,0,0.12);">
+    <img src="https://img.youtube.com/vi/Jm4qm8LqFXo/maxresdefault.jpg" alt="Vid&eacute;o de d&eacute;monstration CapriTrack" style="width:100%; display:block;">
+    <span style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:74px; height:52px; background:rgba(0,0,0,0.72); border-radius:13px; display:flex; align-items:center; justify-content:center;">
+      <svg viewBox="0 0 24 24" fill="white" style="width:30px;height:30px;"><path d="M8 5v14l11-7z"/></svg>
+    </span>
+  </a>
+</div>
+
+    <div class="section-subtitle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> Rapport collectif (extraits)</div>
+    <div class="carousel-container" id="carousel-rapport"><div class="carousel-track">
+      <div class="carousel-slide"><img src="../images/sae206/sae206-rapport-p1.png" alt="carousel-rapport" onclick="openLightbox(this)"><div class="carousel-caption"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Rapport collectif &ndash; page de garde</div></div>
+      <div class="carousel-slide"><img src="../images/sae206/sae206-rapport-p3.png" alt="carousel-rapport" onclick="openLightbox(this)"><div class="carousel-caption"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Introduction &amp; tableau pivot</div></div>
+      <div class="carousel-slide"><img src="../images/sae206/sae206-rapport-p5.png" alt="carousel-rapport" onclick="openLightbox(this)"><div class="carousel-caption"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Positivit&eacute; &amp; n&eacute;gativit&eacute; &ndash; &eacute;volution des cheptels n&eacute;gatifs</div></div>
+      <div class="carousel-slide"><img src="../images/sae206/sae206-rapport-p9.png" alt="carousel-rapport" onclick="openLightbox(this)"><div class="carousel-caption"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Classification sanitaire &ndash; &eacute;volution de la r&eacute;partition des classes</div></div>
+      <div class="carousel-slide"><img src="../images/sae206/sae206-rapport-p12.png" alt="carousel-rapport" onclick="openLightbox(this)"><div class="carousel-caption"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Conclusion du rapport</div></div>
+    </div>
+    <button class="carousel-btn prev" onclick="moveCarousel('carousel-rapport', -1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+    <button class="carousel-btn next" onclick="moveCarousel('carousel-rapport', 1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 6 15 12 9 18"/></svg></button>
+    <div class="carousel-dots" id="carousel-rapport-dots"></div></div>
+    <div style="text-align:center; margin: 1rem 0 1.5rem;"><a href="../images/sae206/sae206-rapport-collectif.pdf" target="_blank" rel="noopener" style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 24px; border-radius: 50px; font-family: var(--font-body); font-size: 0.82rem; font-weight: 600; color: var(--green-dark); border: 1.5px solid var(--green-main); text-decoration: none; transition: all 0.35s; background: transparent; margin: 0 6px 8px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:16px;height:16px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Rapport collectif complet (PDF)</a></div>
+
+    <div class="section-subtitle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg> Support oral en anglais</div>
+    <div class="carousel-container" id="carousel-oral"><div class="carousel-track">
+      <div class="carousel-slide"><img src="../images/sae206/sae206-oral-1.png" alt="carousel-oral" onclick="openLightbox(this)"><div class="carousel-caption"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Diapo 1 &ndash; Page de garde (PCR mycoplasma monitoring for goat herds)</div></div>
+      <div class="carousel-slide"><img src="../images/sae206/sae206-oral-2.png" alt="carousel-oral" onclick="openLightbox(this)"><div class="carousel-caption"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Diapo 2 &ndash; Outline</div></div>
+      <div class="carousel-slide"><img src="../images/sae206/sae206-oral-3.png" alt="carousel-oral" onclick="openLightbox(this)"><div class="carousel-caption"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Diapo 3 &ndash; Context</div></div>
+      <div class="carousel-slide"><img src="../images/sae206/sae206-oral-4.png" alt="carousel-oral" onclick="openLightbox(this)"><div class="carousel-caption"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Diapo 4 &ndash; Needs &amp; data</div></div>
+      <div class="carousel-slide"><img src="../images/sae206/sae206-oral-5.png" alt="carousel-oral" onclick="openLightbox(this)"><div class="carousel-caption"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Diapo 5 &ndash; Project management (SCRUM &amp; Kanban)</div></div>
+      <div class="carousel-slide"><img src="../images/sae206/sae206-oral-6.png" alt="carousel-oral" onclick="openLightbox(this)"><div class="carousel-caption"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Diapo 6 &ndash; Trello boards</div></div>
+      <div class="carousel-slide"><img src="../images/sae206/sae206-oral-7.png" alt="carousel-oral" onclick="openLightbox(this)"><div class="carousel-caption"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Diapo 7 &ndash; Technology choices</div></div>
+      <div class="carousel-slide"><img src="../images/sae206/sae206-oral-8.png" alt="carousel-oral" onclick="openLightbox(this)"><div class="carousel-caption"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Diapo 8 &ndash; Live demonstration</div></div>
+      <div class="carousel-slide"><img src="../images/sae206/sae206-oral-9.png" alt="carousel-oral" onclick="openLightbox(this)"><div class="carousel-caption"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Diapo 9 &ndash; Conclusion</div></div>
+      <div class="carousel-slide"><img src="../images/sae206/sae206-oral-10.png" alt="carousel-oral" onclick="openLightbox(this)"><div class="carousel-caption"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Diapo 10 &ndash; Thank you for your listening</div></div>
+    </div>
+    <button class="carousel-btn prev" onclick="moveCarousel('carousel-oral', -1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+    <button class="carousel-btn next" onclick="moveCarousel('carousel-oral', 1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 6 15 12 9 18"/></svg></button>
+    <div class="carousel-dots" id="carousel-oral-dots"></div></div>
+    <div style="text-align:center; margin: 1rem 0 1.5rem;"><a href="../images/sae206/sae206-support-oral-en.pdf" target="_blank" rel="noopener" style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 24px; border-radius: 50px; font-family: var(--font-body); font-size: 0.82rem; font-weight: 600; color: var(--green-dark); border: 1.5px solid var(--green-main); text-decoration: none; transition: all 0.35s; background: transparent; margin: 0 6px 8px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:16px;height:16px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Support oral complet (PDF)</a></div>
+
+    <div class="section-subtitle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Mon compte rendu individuel</div>
+    <div class="carousel-container" id="carousel-cr"><div class="carousel-track">
+      <div class="carousel-slide"><img src="../images/sae206/sae206-cr-1.png" alt="carousel-cr" onclick="openLightbox(this)"><div class="carousel-caption"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Compte rendu individuel &ndash; apprentissage critique cibl&eacute; &amp; compr&eacute;hension du besoin</div></div>
+      <div class="carousel-slide"><img src="../images/sae206/sae206-cr-2.png" alt="carousel-cr" onclick="openLightbox(this)"><div class="carousel-caption"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Ergonomie, identit&eacute; visuelle &amp; possibilit&eacute;s de filtrage</div></div>
+      <div class="carousel-slide"><img src="../images/sae206/sae206-cr-3.png" alt="carousel-cr" onclick="openLightbox(this)"><div class="carousel-caption"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Bilan personnel</div></div>
+    </div>
+    <button class="carousel-btn prev" onclick="moveCarousel('carousel-cr', -1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+    <button class="carousel-btn next" onclick="moveCarousel('carousel-cr', 1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 6 15 12 9 18"/></svg></button>
+    <div class="carousel-dots" id="carousel-cr-dots"></div></div>
+    <div style="text-align:center; margin: 1rem 0 1.5rem;"><a href="../images/sae206/sae206-cr-individuel.pdf" target="_blank" rel="noopener" style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 24px; border-radius: 50px; font-family: var(--font-body); font-size: 0.82rem; font-weight: 600; color: var(--green-dark); border: 1.5px solid var(--green-main); text-decoration: none; transition: all 0.35s; background: transparent; margin: 0 6px 8px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:16px;height:16px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Compte rendu individuel (PDF)</a></div>
+  </div>
+
+  <div class="content-section fade-up"><div class="content-section-header"><div class="content-section-num num-pink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="width:18px;height:18px;"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg></div><h2 class="content-section-title">Comp&eacute;tences mobilis&eacute;es</h2></div>
+    <p style="color:var(--text-muted); font-size:0.9rem;">SA&Eacute; int&eacute;grative&nbsp;: elle mobilise simultan&eacute;ment les trois comp&eacute;tences du BUT Science des Donn&eacute;es.</p>
+    <p style="font-size:0.85rem; margin: 1rem 0 0.6rem; font-weight:700; color:var(--green-dark);">Apprentissages critiques &middot; Comp&eacute;tence 1 &ndash; Traiter</p>
+    <div class="competence-grid"><span class="competence-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m9 12 2 2 4-4"/></svg> AC11.01 &ndash; Interpr&eacute;ter et prendre en compte le besoin du commanditaire</span><span class="competence-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m9 12 2 2 4-4"/></svg> AC11.03 &ndash; Conna&icirc;tre la syntaxe des langages et savoir l&rsquo;utiliser</span><span class="competence-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m9 12 2 2 4-4"/></svg> AC11.05 &ndash; Comprendre les structures algorithmiques de base</span><span class="competence-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m9 12 2 2 4-4"/></svg> AC11.06 &ndash; Prendre conscience de l&rsquo;int&eacute;r&ecirc;t de la programmation</span></div>
+    <p style="font-size:0.85rem; margin: 1rem 0 0.6rem; font-weight:700; color:var(--gold-dark);">Apprentissages critiques &middot; Comp&eacute;tence 2 &ndash; Analyser</p>
+    <div class="competence-grid"><span class="competence-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m9 12 2 2 4-4"/></svg> AC12.01 &ndash; Consid&eacute;rer les caract&eacute;ristiques propres des sources de donn&eacute;es</span><span class="competence-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m9 12 2 2 4-4"/></svg> AC12.02 &ndash; Donn&eacute;es propres et pr&eacute;par&eacute;es pour une analyse correcte</span><span class="competence-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m9 12 2 2 4-4"/></svg> AC12.03 &ndash; Synth&egrave;ses num&eacute;riques et graphiques d&rsquo;une variable</span></div>
+    <p style="font-size:0.85rem; margin: 1rem 0 0.6rem; font-weight:700; color:var(--pink-accent);">Apprentissages critiques &middot; Comp&eacute;tence 3 &ndash; Valoriser</p>
+    <div class="competence-grid"><span class="competence-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m9 12 2 2 4-4"/></svg> AC13.02 &ndash; Contextualiser ses donn&eacute;es</span><span class="competence-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m9 12 2 2 4-4"/></svg> AC13.03 &ndash; Mettre en &eacute;vidence des r&eacute;sultats cl&eacute;s par des indicateurs pertinents</span><span class="competence-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m9 12 2 2 4-4"/></svg> AC13.04 &ndash; Expliciter la d&eacute;marche suivie lors de la restitution</span><span class="competence-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m9 12 2 2 4-4"/></svg> AC13.05 &ndash; Int&eacute;r&ecirc;ts de la data visualisation et de l&rsquo;infographie</span><span class="competence-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m9 12 2 2 4-4"/></svg> AC13.06 &ndash; Expression pr&eacute;cise et nuanc&eacute;e (fran&ccedil;ais et langue &eacute;trang&egrave;re)</span></div>
+    <p style="font-size:0.85rem; margin: 1rem 0 0.6rem; font-weight:700;">Ressources mobilis&eacute;es</p>
+    <div class="competence-grid"><span class="competence-chip highlight"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m9 12 2 2 4-4"/></svg> R2.01 &ndash; Reporting et Datavisualisation</span><span class="competence-chip highlight"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m9 12 2 2 4-4"/></svg> R2.02 &ndash; Bases de donn&eacute;es relationnelles 2</span><span class="competence-chip highlight"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m9 12 2 2 4-4"/></svg> R2.03 &ndash; Bases de la programmation 2</span><span class="competence-chip highlight"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m9 12 2 2 4-4"/></svg> R2.05 &ndash; Statistique descriptive 2</span><span class="competence-chip highlight"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m9 12 2 2 4-4"/></svg> R2.09 &ndash; Approfondissement de l&rsquo;anglais de sp&eacute;cialit&eacute;</span><span class="competence-chip highlight"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m9 12 2 2 4-4"/></svg> R2.10 &ndash; Communication et s&eacute;miologie</span><span class="competence-chip highlight"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m9 12 2 2 4-4"/></svg> R2.12 &ndash; Projet Personnel et Professionnel 2</span></div>
+    <p style="font-size:0.85rem; margin: 1rem 0 0.6rem; font-weight:700;">Comp&eacute;tences techniques</p>
+    <div class="competence-grid"><span class="competence-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m9 12 2 2 4-4"/></svg> Pipeline ETL Python (pandas, xlrd, nettoyage des donn&eacute;es)</span><span class="competence-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m9 12 2 2 4-4"/></svg> Mod&eacute;lisation et base SQLite (MCD Looping)</span><span class="competence-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m9 12 2 2 4-4"/></svg> Application web Streamlit + Plotly interactif</span><span class="competence-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m9 12 2 2 4-4"/></svg> Scoring sanitaire longitudinal (8 classes A&ndash;I)</span><span class="competence-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m9 12 2 2 4-4"/></svg> Pilotage de projet SCRUM (Scrum Master, Kanban Trello)</span><span class="competence-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m9 12 2 2 4-4"/></svg> Restitution bilingue (rapport, oral en anglais)</span></div>
+  </div>
+
+  <div class="content-section fade-up"><div class="content-section-header"><div class="content-section-num num-pink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="width:18px;height:18px;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div><h2 class="content-section-title">Difficult&eacute;s rencontr&eacute;es</h2></div>
+    <div class="difficulty-card"><h4><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg> Les m&eacute;langes &laquo;&nbsp;x4&nbsp;&raquo;, finalement &eacute;cart&eacute;s</h4><p>Le d&eacute;partement des Deux-S&egrave;vres (79) transmet ses r&eacute;sultats sous forme de m&eacute;langes &laquo;&nbsp;x4&nbsp;&raquo;&nbsp;: un m&ecirc;me test regroupe quatre &eacute;chantillons, qui ne sont repris individuellement qu&rsquo;en cas de positivit&eacute;. Reconstituer automatiquement cette logique dans le pipeline s&rsquo;est r&eacute;v&eacute;l&eacute; bien plus complexe que pr&eacute;vu, pour un gain limit&eacute; au regard du temps disponible. Nous avons donc fait le choix, assum&eacute;, de laisser cette gestion de c&ocirc;t&eacute; afin de concentrer nos efforts sur les fonctionnalit&eacute;s &agrave; plus forte valeur pour le laboratoire.</p></div>
+    <div class="difficulty-card"><h4><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg> S&rsquo;approprier un contexte m&eacute;tier complexe</h4><p>La plus grande difficult&eacute; n&rsquo;a pas &eacute;t&eacute; technique, mais m&eacute;tier. Le domaine v&eacute;t&eacute;rinaire comportait de nombreuses dimensions qui nous &eacute;taient totalement inconnues, et il nous a fallu, &agrave; plusieurs reprises, revenir en arri&egrave;re faute d&rsquo;avoir bien compris certains aspects&nbsp;: la fa&ccedil;on dont la classe sanitaire d&rsquo;un cheptel est d&eacute;termin&eacute;e, le fait que le r&eacute;sultat d&rsquo;une cible se r&eacute;percute parfois sur trois autres (les sous-familles de Myco&iuml;des lorsque seules deux bact&eacute;ries sont test&eacute;es), et bien d&rsquo;autres r&egrave;gles que nous d&eacute;couvrions au fur et &agrave; mesure. Il a fallu progressivement nous approprier ce contexte m&eacute;tier pour que l&rsquo;outil soit juste, et ce manque de rep&egrave;res a parfois limit&eacute; notre capacit&eacute; &agrave; interpr&eacute;ter finement certains r&eacute;sultats.</p></div>
+    <div class="difficulty-card"><h4><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg> Des technologies &agrave; apprendre en autonomie</h4><p>Le projet a &eacute;t&eacute; volontairement ambitieux&nbsp;: nous avons choisi des technologies que nous ne ma&icirc;trisions pas, notamment SQLite, Streamlit et Metabase. Je me suis form&eacute;e seule &agrave; ces outils pendant la SA&Eacute;. J&rsquo;ai beaucoup aim&eacute; cette part d&rsquo;auto-apprentissage, m&ecirc;me si elle a impos&eacute; un rythme soutenu. Faute de temps, le tableau de bord Metabase initialement envisag&eacute; a finalement &eacute;t&eacute; abandonn&eacute;.</p></div>
+    <div class="difficulty-card"><h4><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg> La g&eacute;olocalisation &agrave; la commune</h4><p>Ne disposant pas des coordonn&eacute;es exactes des cheptels, ceux-ci sont positionn&eacute;s au chef-lieu de leur commune. Cela explique certains r&eacute;sultats visuellement surprenants, comme un cheptel apparaissant au centre-ville de Poitiers, et constitue une piste d&rsquo;am&eacute;lioration pour une future version.</p></div>
+  </div>
+
+  <div class="content-section fade-up"><div class="content-section-header"><div class="content-section-num num-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="width:18px;height:18px;"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div><h2 class="content-section-title">Bilan r&eacute;flexif</h2></div>
+    <div class="learning-block"><h4>Savoir-faire</h4><p>Cette SA&Eacute; m&rsquo;a fait parcourir, pour la premi&egrave;re fois, l&rsquo;int&eacute;gralit&eacute; de la cha&icirc;ne d&rsquo;un projet en science des donn&eacute;es&nbsp;: de l&rsquo;extraction et de la pr&eacute;paration des donn&eacute;es jusqu&rsquo;au tableau de bord et &agrave; la restitution, en passant par la mod&eacute;lisation et le stockage. J&rsquo;ai consolid&eacute; des savoir-faire concrets&nbsp;: structurer une base SQLite &agrave; partir d&rsquo;un MCD adapt&eacute; au besoin m&eacute;tier, automatiser un pipeline ETL g&eacute;rant des sources h&eacute;t&eacute;rog&egrave;nes, concevoir un tableau de bord ergonomique et une identit&eacute; visuelle coh&eacute;rente, mener une analyse exploratoire argument&eacute;e, et piloter un projet en m&eacute;thode SCRUM.</p></div>
+    <div class="learning-block"><h4>Savoir-&ecirc;tre</h4><p>Cette SA&Eacute; a sans doute marqu&eacute; un tournant dans ma formation&nbsp;: la donn&eacute;e a vraiment pris du sens pour moi. Le contexte m&eacute;dical m&rsquo;a s&eacute;duite et je m&rsquo;identifie peut-&ecirc;tre davantage &agrave; cette voie. Comme je l&rsquo;ai &eacute;crit dans mon compte rendu individuel, c&rsquo;est avant tout la compr&eacute;hension du besoin qui m&rsquo;anime&nbsp;: me mettre &agrave; la place de l&rsquo;utilisateur, interpr&eacute;ter sa demande, parfois l&rsquo;anticiper. J&rsquo;ai aussi ador&eacute; l&rsquo;autonomie de l&rsquo;auto-apprentissage, et je trouve tr&egrave;s stimulant de rendre une analyse r&eacute;ellement utile aux d&eacute;cisions du v&eacute;t&eacute;rinaire. Enfin, la restitution en anglais reste un exercice que j&rsquo;appr&eacute;cie particuli&egrave;rement, car la dimension internationale m&rsquo;attire beaucoup.</p></div>
+    <div class="learning-block"><h4>Ce que je ferais diff&eacute;remment</h4><p>Avec le recul, je chercherais &agrave; utiliser l&rsquo;intelligence artificielle de mani&egrave;re plus structur&eacute;e, en privil&eacute;giant son r&ocirc;le d&rsquo;assistante &agrave; l&rsquo;apprentissage et &agrave; la r&eacute;flexion plut&ocirc;t que de simple outil de production. J&rsquo;aimerais aussi int&eacute;grer le tableau de bord Metabase que nous avions envisag&eacute;, et am&eacute;liorer la g&eacute;olocalisation des cheptels pour gagner en pr&eacute;cision cartographique. Autant de perspectives qui prolongeraient naturellement CapriTrack.</p></div>
+  </div>
+
+</div></div>
+<svg class="wave-divider" viewBox="0 0 1440 60" preserveAspectRatio="none">
+  <path d="M0,30 C240,55 480,5 720,35 C960,55 1200,10 1440,25 L1440,0 L0,0 Z" fill="var(--white-warm)"/>
+</svg>
+
+<div class="back-projects">
+  <a href="../index.html#projets" class="btn btn-primary">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    Retour aux projets
+  </a>
+</div>
+
+<footer>
+  <p>&copy; 2026 Manon de Matha &middot; Portfolio BUT Science des Donn&eacute;es &middot; Fait avec passion</p>
+</footer>
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+  const nav = document.getElementById('navbar');
+  window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 20));
+  function openLightbox(img) {
+    const lb = document.getElementById('lightbox');
+    document.getElementById('lightbox-img').src = img.src;
+    lb.classList.add('active');
+  }
+  document.getElementById('lightbox').addEventListener('click', function(e) {
+    if (e.target !== document.getElementById('lightbox-img')) this.classList.remove('active');
+  });
+  const carousels = {};
+  function initCarousel(id) {
+    const container = document.getElementById(id);
+    if (!container) return;
+    const track = container.querySelector('.carousel-track');
+    const slides = container.querySelectorAll('.carousel-slide');
+    const dotsContainer = document.getElementById(id + '-dots');
+    carousels[id] = { track, slides, current: 0 };
+    slides.forEach((_, i) => {
+      const dot = document.createElement('button');
+      dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+      dot.onclick = () => goToSlide(id, i);
+      dotsContainer.appendChild(dot);
+    });
+  }
+  function goToSlide(id, index) {
+    const c = carousels[id];
+    if (!c) return;
+    c.current = index;
+    c.track.style.transform = 'translateX(-' + (index * 100) + '%)';
+    const dots = document.getElementById(id + '-dots').querySelectorAll('.carousel-dot');
+    dots.forEach((d, i) => d.classList.toggle('active', i === index));
+  }
+  function moveCarousel(id, dir) {
+    const c = carousels[id];
+    if (!c) return;
+    let next = c.current + dir;
+    if (next < 0) next = c.slides.length - 1;
+    if (next >= c.slides.length) next = 0;
+    goToSlide(id, next);
+  }
+    initCarousel('carousel-app');
+  initCarousel('carousel-rapport');
+  initCarousel('carousel-oral');
+  initCarousel('carousel-cr');
+  initCarousel('carousel-trello');
+</script>
+</body>
+</html>
